@@ -5,7 +5,7 @@ San Lupercio, ten piedad de nosotros 🙏
 ### 12/11/24
 >TODO: Login ✅
 
->TODO: Usuarios ❌
+>TODO: Usuarios ✅
 
 >TODO: Alumnos ❌
 
