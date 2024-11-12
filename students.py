@@ -6,9 +6,9 @@ from db_user import db_user
 from user import user as user_class
 from table_style import apply_style
 from db_functions import email_available
-from constants import TYPE
+from constants import TYPE, CAREER
 
-class Users(Frame):
+class Students(Frame):
     # region Interfaz
     def __init__(self, container, controller, type: user_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
@@ -39,7 +39,7 @@ class Users(Frame):
         self.lb_id.grid(row=0, column=0, pady=0, sticky="w")
         self.tx_id = Entry(fr_entry, placeholder_text="ID")
         self.tx_id.grid(row=0, column=1, pady=5)
-
+        
         self.lb_name = Label(fr_entry, text="Nombre")
         self.lb_name.grid(row=1, column=0, pady=0, sticky="w")
         self.tx_name = Entry(fr_entry, placeholder_text="Nombre")
@@ -63,11 +63,11 @@ class Users(Frame):
         self.tx_password = Entry(fr_entry, placeholder_text="Contraseña")
         self.tx_password.grid(row=3, column=1, pady=5, padx=20)
         
-        self.lb_profile = Label(fr_entry, text="Perfil")
-        self.lb_profile.grid(row=3, column=2, pady=0, sticky="w")
-        self.selected_type = StringVar(value="administrador")
-        self.opm_type = OptMenu(fr_entry, values=(TYPE), variable=self.selected_type)
-        self.opm_type.grid(row=3, column=3, pady=5)
+        self.lb_career = Label(fr_entry, text="Carrera")
+        self.lb_career.grid(row=3, column=2, pady=0, sticky="w")
+        self.selected_career = StringVar(value="INNI")
+        self.opm_career = OptMenu(fr_entry, values=(CAREER), variable=self.selected_career)
+        self.opm_career.grid(row=3, column=3, pady=5)
         
         frame = Frame(fr_table)
         frame.grid(row=0, column=0, sticky="nsew")
@@ -90,7 +90,8 @@ class Users(Frame):
         scroll_y.configure(command=self.table.yview)
         scroll_x.configure(command=self.table.xview)
         
-        self.table['columns'] = ("ID", "Nombre", "Ap_paterno", "Ap_materno", "Contraseña", "Correo", "Perfil")
+        # Puede que no haga falta tabla (Hacer pregunta al profe)
+        self.table['columns'] = ("ID", "Nombre", "Ap_paterno", "Ap_materno", "Correo", "Carrera")
         self.table.column("#0", width=0, stretch=False)
         self.table.column("ID", anchor="center", width=30)
         self.table.column("Nombre", anchor="center", width=150)
@@ -174,7 +175,7 @@ class Users(Frame):
         self.tx_p_surname.configure(state=ENABLE)
         self.tx_m_surname.configure(state=ENABLE)
         self.tx_password.configure(state=ENABLE)
-        self.opm_type.configure(state=ENABLE)
+        self.opm_career.configure(state=ENABLE)
         
         self.bt_new.configure(state=DISABLED)
         self.bt_save.configure(state=ENABLE)
@@ -200,6 +201,7 @@ class Users(Frame):
             return
         
         try:
+            type = find_id(self.TYPE_DICT, self.opm_career.get())
             user = user_class(
                 int(self.tx_id.get()),
                 self.tx_name.get(),
@@ -207,7 +209,7 @@ class Users(Frame):
                 self.tx_m_surname.get(),
                 self.tx_password.get(),
                 self.tx_email.get(),
-                self.opm_type.get()
+                type
             )
             if self.band == True:
                 db_user.save(self, user)
@@ -237,7 +239,7 @@ class Users(Frame):
         self.tx_m_surname.insert(0, values[3])
         self.tx_password.insert(0, values[4])
         self.tx_email.insert(0, values[5])
-        self.opm_type.set(values[6])
+        self.opm_career.set(self.TYPE_DICT[int(values[6])])
     
     def edit_user(self) -> None:
         try:
@@ -260,7 +262,7 @@ class Users(Frame):
         self.tx_m_surname.delete(0, END)
         self.tx_email.delete(0, END)
         self.tx_password.delete(0, END)
-        self.opm_type.set("administrador")
+        self.opm_career.set("administrador")
     
     def default(self):
         self.tx_id.configure(state=ENABLE)
@@ -277,7 +279,7 @@ class Users(Frame):
         self.tx_m_surname.configure(state=DISABLED)
         self.tx_email.configure(state=DISABLED)
         self.tx_password.configure(state=DISABLED)
-        self.opm_type.configure(state=DISABLED)
+        self.opm_career.configure(state=DISABLED)
     
     def enable_edit(self):
         self.bt_new.configure(state=DISABLED)
@@ -292,7 +294,7 @@ class Users(Frame):
         self.tx_m_surname.configure(state=ENABLE)
         self.tx_email.configure(state=ENABLE)
         self.tx_password.configure(state=ENABLE)
-        self.opm_type.configure(state=ENABLE)
+        self.opm_career.configure(state=ENABLE)
         self.clear_user()
     
     # region Tabla
@@ -339,7 +341,7 @@ class Users(Frame):
         if not validate_email(self.tx_email.get()):
             raise Exception("Email inválido")
         
-        if self.opm_type.get() not in TYPE:
+        if self.opm_career.get() not in ["administrador", "maestro", "alumno"]:
             raise Exception("Perfil debe ser administrador, maestro o alumno")
         
         # Size

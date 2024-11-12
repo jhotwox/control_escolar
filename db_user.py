@@ -1,6 +1,6 @@
 from tkinter import messagebox
 import mysql.connector as mysql
-import database as con
+import database as db
 from user import user as user_class
 from db_functions import max_id
 from functions import ERROR_TITLE, WARNING_TITLE
@@ -10,8 +10,7 @@ table = "user"
 class db_user:    
     def save(self, user: user_class) -> None:
         try:
-            self.con = con.conection()
-            self.conn = self.con.open()
+            self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
             self.sql = f"INSERT INTO {table}(id, name, p_surname, m_surname, password, email, type) values (%s,%s,%s,%s,%s,%s,%s)"
             self.data = (
@@ -36,8 +35,7 @@ class db_user:
     
     def edit(self, user: user_class) -> None:
         try:
-            self.con = con.conection()
-            self.conn = self.con.open()
+            self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
             self.sql = f"UPDATE {table} SET name=%s, p_surname=%s, m_surname=%s, email=%s, type=%s, password=%s WHERE id={user.get_id()}"
             self.data = (
@@ -58,8 +56,7 @@ class db_user:
         
     def remove(self, user: user_class) -> None:
         try:
-            self.con = con.conection()
-            self.conn = self.con.open()
+            self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
             self.sql = f"DELETE FROM {table} WHERE id={user.get_id()}"
             self.cursor.execute(self.sql)
@@ -75,10 +72,8 @@ class db_user:
     
     def get_all_users(self) -> list:
         try:
-            self.con = con.conection()
-            self.conn = self.con.open()
+            self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            aux = None
             self.sql = f"SELECT * FROM {table}"
             self.cursor.execute(self.sql)
             rows = self.cursor.fetchall()
@@ -91,11 +86,27 @@ class db_user:
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
             self.conn.close()
-        
+            
+    def get_user_by_id(self, id: int) -> user_class:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"SELECT * FROM {table} WHERE id={id}"
+            self.cursor.execute(self.sql)
+            row = self.cursor.fetchone()
+            self.conn.commit()
+            if row is None:
+                raise Exception("No se encontro el usuario")
+            return user_class(int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6])
+        except Exception as err:
+            print("[-] get_user_by_id: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error en la consulta")
+        finally:
+            self.conn.close()
+    
     def authenticate(self, user: user_class) -> user_class:
         try:
-            self.con = con.conection()
-            self.conn = self.con.open()
+            self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
             self.sql = f"SELECT * FROM {table} WHERE email='{user.get_email()}'"
             self.cursor.execute(self.sql)
@@ -103,7 +114,7 @@ class db_user:
             self.conn.commit()
             if row is not None:
                 if user.get_password() == row[4]:
-                    return user_class(int(row[0]), row[1], row[2], row[3], row[4], row[5], int(row[6]))
+                    return user_class(int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6])
                 else:
                     messagebox.showwarning(WARNING_TITLE, "La contraseña no coincide")
                     raise Exception("La contraseña no coincide")

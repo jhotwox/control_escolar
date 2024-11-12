@@ -1,4 +1,4 @@
-import database as con
+import database as db
 import mysql.connector
 
 #region available
@@ -23,7 +23,7 @@ def is_available(value: str, table: str, column: str) -> bool | None:
         Exception: Value isn't available (Query returns False)
     """
     try:
-        conn = con.conection().open()
+        conn = db.conection().open()
         cursor = conn.cursor()
         sql = f"SELECT COUNT(*) AS available FROM {table} WHERE {column}='{value}'"
         cursor.execute(sql)
@@ -108,7 +108,7 @@ def get_column_order_id(table: str, column: str) -> list | None:
         list | None: Result of the column
     """
     try:
-        conn = con.conection().open()
+        conn = db.conection().open()
         cursor = conn.cursor()
         sql = f"SELECT {column} FROM {table} ORDER BY id"
         cursor.execute(sql)
@@ -127,7 +127,7 @@ def get_column_order_id(table: str, column: str) -> list | None:
         
 def get_unitary_price_by_id(product_id: int = 0) -> float | None:
     try:
-        conn = con.conection().open()
+        conn = db.conection().open()
         cursor = conn.cursor()
         sql = f"SELECT purchase_price FROM product WHERE id = {product_id}"
         cursor.execute(sql)
@@ -143,7 +143,7 @@ def get_unitary_price_by_id(product_id: int = 0) -> float | None:
 
 def get_supplier_by_purchase_id(purchase_id: int) -> int | None:
     try:
-        conn = con.conection().open()
+        conn = db.conection().open()
         cursor = conn.cursor()
         sql = f"SELECT product.supplier FROM product, detail_purchase WHERE product.id = detail_purchase.product_id AND detail_purchase.purchase_id = {purchase_id}"
         cursor.execute(sql)
@@ -178,7 +178,7 @@ def get_column_with_user(table: str, column: str, user_id: int) -> list | None:
         list | None: Result of the column
     """
     try:
-        conn = con.conection().open()
+        conn = db.conection().open()
         cursor = conn.cursor()
         sql = f"SELECT {column} FROM {table} WHERE user_id = {user_id} ORDER BY id"
         cursor.execute(sql)
@@ -221,7 +221,7 @@ def get_columns(table: str, columns: str) -> list | None:
         list | None: Result of the list
     """
     try:
-        conn = con.conection().open()
+        conn = db.conection().open()
         cursor = conn.cursor()
         sql = f"SELECT {columns} FROM {table}"
         cursor.execute(sql)
@@ -260,7 +260,7 @@ def get_column_with_stock(table: str, column: str) -> list | None:
         list | None: Result of the column
     """
     try:
-        conn = con.conection().open()
+        conn = db.conection().open()
         cursor = conn.cursor()
         sql = f"SELECT {column} FROM {table} WHERE stock > 0 ORDER BY id"
         cursor.execute(sql)
@@ -301,7 +301,7 @@ def id_by_name(table: str, name: str) -> int | None:
         int | None: ID if the name was found and None if the name wasn't
     """
     try:
-        conn = con.conection().open()
+        conn = db.conection().open()
         cursor = conn.cursor()
         sql = f"SELECT id FROM {table} WHERE name = '{name}'"
         cursor.execute(sql)
@@ -340,7 +340,7 @@ def name_by_id(table: str, id: int) -> str | None:
         str | None: Name if the id was found and None if the id wasn't
     """
     try:
-        conn = con.conection().open()
+        conn = db.conection().open()
         cursor = conn.cursor()
         sql = f"SELECT name FROM {table} WHERE id = {id}"
         cursor.execute(sql)
@@ -372,7 +372,7 @@ def max_id(table: str) -> int | None:
         int | None: id if the return was sucessful and None if the return was empty
     """
     
-    conn = con.conection().open()
+    conn = db.conection().open()
     cursor = conn.cursor()
     sql = f"SELECT MAX(id) FROM {table}"
     cursor.execute(sql)

@@ -1,5 +1,6 @@
-from customtkinter import CTk, CTkButton as Button, DISABLED, CTkFrame as Frame, CTkLabel as Label
+from customtkinter import CTkButton as Button, CTkFrame as Frame, CTkLabel as Label
 from user import user as user_class
+from constants import TYPE
 
 class Menu(Frame):
     def __init__(self, container, controller, profile: user_class, *args, **kwargs):
@@ -43,14 +44,15 @@ class Menu(Frame):
         self.bt_exit = Button(self, text="Salir", command=self.exit)
         self.bt_exit.grid(row=6, column=0, pady=10, padx=35, columnspan=2, sticky="ew")
         
-        if profile.get_type() == 1:
+        # Desavilitar botones por tipo de usuario
+        if profile.get_type() == TYPE[1]:
             # self.bt_users.configure(state=DISABLED)
             # self.bt_teachers.configure(state=DISABLED)
             # self.bt_subjects.configure(state=DISABLED)
             # self.bt_careers.configure(state=DISABLED)
             return
         
-        if profile.get_type() == 2:
+        if profile.get_type() == TYPE[2]:
             # self.bt_users.configure(state=DISABLED)
             # self.bt_students.configure(state=DISABLED)
             # self.bt_teachers.configure(state=DISABLED)
@@ -96,10 +98,13 @@ class Menu(Frame):
     def open_registrations(self) -> None:
         return
         # self.controller.show_frame("Registrations")
-        
+    
     def exit(self) -> None:
-        if hasattr(self.controller, "show_frame"):
-            self.controller.show_frame("Login")
-            self.controller.delete_frames()
-        else:
-            print("[-] Error con el controlador")
+        # if hasattr(self.controller, "show_frame"):
+        #     self.controller.show_frame("Login")
+        #     self.controller.delete_frames()
+        # else:
+        #     print("[-] Error con el controlador")
+        
+        self.controller.show_frame("Login")
+        self.controller.delete_frames()

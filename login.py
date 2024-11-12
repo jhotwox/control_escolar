@@ -1,30 +1,27 @@
-from customtkinter import CTkButton as Button, CTkEntry as Entry, CTkLabel as Label, CTk, CTkFrame as Frame
+from customtkinter import CTkButton as Button, CTkEntry as Entry, CTkLabel as Label, CTkFrame as Frame
 from tkinter import messagebox
-from functions import is_empty, WARNING_TITLE, ERROR_TITLE
+from functions import is_empty, WARNING_TITLE
 from db_user import db_user
 from user import user as user_class
 from menu import Menu
 from users import Users
+from students import Students
+from constants import TYPE
 
 class Login(Frame):
     def __init__(self, container, controller, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         
-        # self.self = self
         self.container = container
         self.controller = controller
         
         lb_title = Label(self, text="Login", font=("Arial", 36, "bold"))
         lb_title.grid(row=0, column=1, pady=20)
 
-        # self.lbUsername = Label(self, text="Username", font=("Calisto MT", 16))
-        # self.lbUsername.grid(row=1, column=0)
         self.tx_email = Entry(self, width=200, placeholder_text="Correo")
         self.tx_email.grid(row=1, column=1, padx=20, pady=10)
         self.tx_email.insert(0, "")
         
-        # self.lbPass = Label(self, text="Contraseña", font=("Calisto MT", 16))
-        # self.lbPass.grid(row=2, column=0, pady=10)
         self.tx_pass = Entry(self, width=200, placeholder_text="Contraseña", show="*")
         self.tx_pass.grid(row=2, column=1, padx=20, pady=10)
         self.tx_pass.insert(0, "")
@@ -51,6 +48,7 @@ class Login(Frame):
         email = self.tx_email.get()
         password = self.tx_pass.get()
         
+        # validar el formato de los datos enviados
         if not self.validate():
             return
         
@@ -60,24 +58,30 @@ class Login(Frame):
         except:
             return
             
-        if self.user.get_type() == 0:
+        # Ventanas a crear en caso de que sea admin
+        if self.user.get_type() == TYPE[0]:
             windows = {
                 "Menu": Menu,
-                "Users": Users
+                "Users": Users,
+                # "Students": Students
             }
         
-        if self.user.get_type() == 1:
+        # Ventanas a crear en caso de que sea maestro
+        if self.user.get_type() == TYPE[1]:
             windows = {
                 "Menu": Menu
             }
-        if self.user.get_type() == 2:
+        
+        # Ventanas a crear en caso de que sea alumno
+        if self.user.get_type() == TYPE[2]:
             windows = {
                 "Menu": Menu
             }
         
         # Recorrer las clases
         for key, F in windows.items():
-            # La llave se vuelve la clase
+            # La llave es el nombre de la clase, con esta accedemos a la clase (ventana)
+            # self.controller.add_frame("Menu", Menu(), self.user)
             self.controller.add_frame(key, F, self.user)
 
         self.controller.show_frame("Menu")
