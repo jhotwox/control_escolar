@@ -30,7 +30,7 @@ San Lupercio, ten piedad de nosotros 🙏
 
 >TODO: Usuarios ✅ (Cris)
 
->TODO: Alumnos ❌ (Cris)
+>TODO: Alumnos ✅❌ (50%) (Cris)
 
 >TODO: Maestros ❌ (Cris)
 

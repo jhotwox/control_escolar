@@ -10,7 +10,7 @@ from db_subject import db_subject
 from db_preregistration import db_preregistration
 from db_user_career import db_user_career
 
-class Students(Frame):
+class Teachers(Frame):
     # region Interfaz
     def __init__(self, container, controller, type: user_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
@@ -39,6 +39,10 @@ class Students(Frame):
         self.lb_id.grid(row=0, column=0, pady=0, sticky="w")
         self.tx_id = Entry(fr_entry, placeholder_text="ID")
         self.tx_id.grid(row=0, column=1, pady=5)
+        self.lb_cedula = Label(fr_entry, text="Cedula")
+        self.lb_cedula.grid(row=0, column=0, pady=0, sticky="w")
+        self.tx_cedula = Entry(fr_entry, placeholder_text="Cedula")
+        self.tx_cedula.grid(row=0, column=1, pady=5)
         
         self.lb_name = Label(fr_entry, text="Nombre")
         self.lb_name.grid(row=1, column=0, pady=0, sticky="w")

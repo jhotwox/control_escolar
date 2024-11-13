@@ -126,3 +126,17 @@ BEGIN
     SET quota = quota + 1
     WHERE id = OLD.group_id;
 END
+
+-- #region PRUEBAS
+SELECT id, u.name, u.p_surname, u.m_surname, u.email FROM user u WHERE type='alumno';
+
+SELECT u.id, u.name, u.p_surname, u.m_surname, u.email, c.name as career
+FROM user u
+JOIN user_career uc ON u.id = uc.user_id
+JOIN career c ON uc.career_id = c.id
+WHERE u.type = 'alumno';
+
+SELECT c.name as career 
+FROM user_career uc
+JOIN career c ON uc.career_id = c.id
+WHERE uc.user_id = '1';

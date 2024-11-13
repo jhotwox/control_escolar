@@ -63,7 +63,7 @@ class Login(Frame):
             windows = {
                 "Menu": Menu,
                 "Users": Users,
-                # "Students": Students
+                "Students": Students
             }
         
         # Ventanas a crear en caso de que sea maestro
