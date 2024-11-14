@@ -6,18 +6,17 @@ from db_horarios import db_horarios
 from horario import Horario as horario_class
 from table_style import apply_style
 from db_functions import email_available
-from constants import TYPE    
+from constants import TYPE
+from user import user as user_class
 
 class Horario(Frame):
     # region Interfaz
-    def __init__(self, container, controller, horario_class_type: horario_class, *args, **kwargs):
+    def __init__(self, container, controller, type: user_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         
         self.controller = controller
         self.band = False
-        self.horario_class_type = horario_class_type
-        
-        self.TYPE_DICT = TYPE
+        self.type = type
         
         fr_search = Frame(self)
         fr_search.grid(row=0, column=0, sticky="nsw", padx=10, pady=10)

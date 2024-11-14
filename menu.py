@@ -75,8 +75,7 @@ class Menu(Frame):
         # self.controller.show_frame("Subjects")
 
     def open_schedules(self) -> None:
-        return
-        # self.controller.show_frame("Schedules")
+        self.controller.show_frame("Horarios")
         
     def open_careers(self) -> None:
         return

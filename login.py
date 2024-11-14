@@ -6,6 +6,7 @@ from user import user as user_class
 from menu import Menu
 from users import Users
 from students import Students
+from horarios import Horario
 from constants import TYPE
 
 class Login(Frame):
@@ -45,25 +46,32 @@ class Login(Frame):
         return True
 
     def login(self) -> None:
+        print("band 1")
         email = self.tx_email.get()
         password = self.tx_pass.get()
         
+        print("band 2")
         # validar el formato de los datos enviados
         if not self.validate():
             return
         
+        print("band 3")
         try:
             aux = user_class(email=email, password=password)
+            print("band 4")
             self.user = db_user.authenticate(self, aux)
+            print("band 5")
         except:
             return
-            
+
+        print("Aqui llega")
         # Ventanas a crear en caso de que sea admin
         if self.user.get_type() == TYPE[0]:
             windows = {
                 "Menu": Menu,
                 "Users": Users,
-                "Students": Students
+                "Students": Students,
+                "Horarios": Horario
             }
         
         # Ventanas a crear en caso de que sea maestro
