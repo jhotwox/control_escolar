@@ -3,12 +3,12 @@ from tkinter import messagebox
 from tkinter.ttk import Treeview
 from functions import entry_empty, find_id, INFO_TITLE, WARNING_TITLE, ERROR_TITLE
 from table_style import apply_style
-from constants import TYPE, CAREER
 from db_user import db_user
 from user import user as user_class
 from db_subject import db_subject
 from db_preregistration import db_preregistration
 from db_user_career import db_user_career
+from db_career import db_carreer
 
 class Students(Frame):
     # region Interfaz
@@ -16,8 +16,7 @@ class Students(Frame):
         super().__init__(container, *args, **kwargs)
         
         self.controller = controller
-        self.band = None
-        self.type = type
+        self.type: user_class = type
         
         fr_search = Frame(self)
         fr_search.grid(row=0, column=0, sticky="nsw", padx=10, pady=10)
@@ -58,16 +57,19 @@ class Students(Frame):
         self.tx_m_surname = Entry(fr_entry, placeholder_text="Apellido Materno")
         self.tx_m_surname.grid(row=2, column=3, pady=5, padx=20)
 
+        self.careers = []
         self.lb_career = Label(fr_entry, text="Carrera")
         self.lb_career.grid(row=3, column=0, pady=0, sticky="w")
-        self.selected_career = StringVar(value="INNI")
-        self.opm_career = OptMenu(fr_entry, values=(CAREER), variable=self.selected_career)
+        self.selected_career = StringVar(value="")
+        self.selected_career.trace("w", self.on_selection_carreer)
+        self.opm_career = OptMenu(fr_entry, values=(self.careers), variable=self.selected_career)
         self.opm_career.grid(row=3, column=1, pady=5)
         
         self.subjects = []
         self.lb_subject = Label(fr_entry, text="Materia")
         self.lb_subject.grid(row=3, column=2, pady=0, sticky="w")
         self.selected_subject = StringVar(value="")
+        self.selected_subject.trace("w", self.on_selection_subject)
         self.opm_subject = OptMenu(fr_entry, values=(self.subjects), variable=self.selected_subject)
         self.opm_subject.grid(row=3, column=3, pady=5)
         
@@ -95,7 +97,6 @@ class Students(Frame):
         scroll_y.configure(command=self.table.yview)
         scroll_x.configure(command=self.table.xview)
         
-        # Puede que no haga falta tabla (Hacer pregunta al profe)
         self.table['columns'] = ("ID", "Nombre", "Ap_paterno", "Ap_materno", "Correo")
         self.table.column("#0", width=0, stretch=False)
         self.table.column("ID", anchor="center", width=30)
@@ -111,7 +112,7 @@ class Students(Frame):
         self.table.heading("Ap_materno", text="Ap_materno", anchor="center")
         self.table.heading("Correo", text="Correo", anchor="center")
         
-        self.bt_save = Button(fr_button, text="Salvar", border_width=1, width=60, command=self.save_preregistration)
+        self.bt_save = Button(fr_button, text="Salvar", border_width=1, width=60, command=self.save)
         self.bt_save.grid(row=0, column=0, padx=5, pady=10)
         self.bt_cancel = Button(fr_button, text="Cancelar", border_width=1, width=60, command=self.default)
         self.bt_cancel.grid(row=0, column=1, padx=5, pady=10)
@@ -122,24 +123,63 @@ class Students(Frame):
         self.bt_return = Button(fr_button, text="Regresar", border_width=1, width=60, command=self._return)
         self.bt_return.grid(row=0, column=4, padx=5, pady=10)
         
-        self.default()
         self.update_table()
+        self.default()
     
     # region Funciones SQL
+    def on_selection_carreer(self, *args) -> None:
+        if self.type.get_type() == "administrador":
+            return
+        
+        career_name = self.opm_career.get()        
+        if career_name == "" or career_name is None or career_name == "No asignado":
+            return
+        
+        self.opm_subject.configure(state=ENABLE)
+        career_id = db_carreer.get_id_by_name(self, career_name)
+        self.subjects = db_subject.get_subjects_by_career(self, career_id)
+        self.opm_subject.configure(values=self.subjects)
+    
+    def on_selection_subject(self, *args) -> None:
+        if self.type.get_type() == "administrador":
+            return
+        
+        subject_name = self.opm_subject.get()
+        if subject_name == "" or subject_name is None:
+            return
+        
+        subject_list = self.get_subjects_from_tb()
+        self.tx_subject.configure(state=ENABLE)
+        # Eliminar
+        if subject_name in subject_list:
+            new_text = self.tx_subject.get(1.0, "end-1c").replace(subject_name+"\n", "")
+            self.tx_subject.delete(1.0, END)
+            self.tx_subject.insert(1.0, new_text)
+        # Añadir
+        else:
+            self.tx_subject.insert("end", subject_name + "\n")
+        
+        self.tx_subject.configure(state=DISABLED)
+    
+    def get_subjects_from_tb(self) -> list:
+        self.tx_subject.configure(state=ENABLE)
+        all_text = self.tx_subject.get(1.0, "end-1c")
+        self.tx_subject.configure(state=DISABLED)
+        return all_text.splitlines()
+    
+    def search_id_in_table(self, id: int) -> str:
+        for item in self.table.get_children():
+            item_values = self.table.item(item, "values")    
+            if item_values[0] == str(id):
+                return item
+        return None
+    
     def search_student(self) -> None:
         if not self.tx_search.get().isdecimal():
             messagebox.showwarning(ERROR_TITLE, "Ingrese un ID válido")
             return
         
-        def search_id():
-            for item in self.table.get_children():
-                item_values = self.table.item(item, "values")
-                
-                if item_values[0] == self.tx_search.get():
-                    return item
-            return None
-        
-        id = search_id()
+        id = self.search_id_in_table(self.tx_search.get())
         if id is None:
             messagebox.showwarning(WARNING_TITLE, "No se encontro el estudiante")
             return
@@ -147,27 +187,9 @@ class Students(Frame):
         self.table.selection_set(id)
         self.table.focus(id)
         self.table.see(id)
-        
-    def new_student(self) -> None:
-        self.tx_id.configure(state=ENABLE)
-        self.tx_name.configure(state=ENABLE)
-        self.tx_email.configure(state=ENABLE)
-        self.tx_p_surname.configure(state=ENABLE)
-        self.tx_m_surname.configure(state=ENABLE)
-        self.opm_career.configure(state=ENABLE)
-        
-        self.bt_save.configure(state=ENABLE)
-        self.bt_cancel.configure(state=ENABLE)
-        self.bt_edit.configure(state=DISABLED)
-        
-        self.clear_student()
-        self.tx_id.insert(0, db_user.get_max_id(self)+1)
-        self.tx_id.configure(state=DISABLED)
-        self.band = True
-        return
-        
+    
     #TODO: Guardar preregistro
-    def save_preregistration(self) -> None:
+    def save(self) -> None:
         try:
             self.validate()
         except Exception as error:
@@ -175,20 +197,29 @@ class Students(Frame):
             return
 
         try:
-            # Eliminar preregistros anteriores
-            db_preregistration.remove_all_by_user(self, self.tx_id.get())
-            
-            # Guardar preregistros nuevos
-            
-            
-            
-            messagebox.showinfo(INFO_TITLE, "Preregistro guardado exitosamente!")
+            # Guardar carrera
+            if self.type.get_type() == "administrador":
+                db_user_career.remove_by_user(self, self.tx_id.get())
+                db_user_career.save(self, self.tx_id.get(), db_carreer.get_id_by_name(self, self.opm_career.get()))
+                messagebox.showinfo(INFO_TITLE, "Carrera guardada exitosamente!")
+            # Guardar preregistro
+            elif self.type.get_type() == "alumno":
+                # Eliminar preregistros anteriores
+                db_preregistration.remove_all_by_user(self, self.tx_id.get())
+                
+                # Guardar preregistros nuevos
+                subjects_list = self.get_subjects_from_tb()
+                subjects_dict = db_subject.get_subjects_dict(self, db_carreer.get_id_by_name(self, self.opm_career.get()))
+                if subjects_dict is None or subjects_dict == {}:
+                    raise Exception("No se encontraron materias en la carrera")
+                for subject in subjects_list:
+                    db_preregistration.save(self, self.tx_id.get(), find_id(subjects_dict, subject))
+                
+                messagebox.showinfo(INFO_TITLE, "Preregistro guardado exitosamente!")
             self.default()
         except Exception as err:
-            print(f"[-] save_preregistration: {err}")
-            messagebox.showerror(ERROR_TITLE, f"Error al guardar preregistro")
-        finally:
-            self.band = None
+            print(f"[-] save: {err}")
+            messagebox.showerror(ERROR_TITLE, f"Error al guardar")
     
     #TODO: Obtener estudiante al seleccionar en la tabla
     def get_student(self) -> None:
@@ -199,25 +230,40 @@ class Students(Frame):
         values = self.table.item(selected, "values")
         self.enable_edit()
         self.tx_id.insert(0, values[0])
-        self.tx_id.configure(state=DISABLED)
         self.tx_name.insert(0, values[1])
         self.tx_p_surname.insert(0, values[2])
         self.tx_m_surname.insert(0, values[3])
         self.tx_email.insert(0, values[4])
+        self.tx_id.configure(state=DISABLED)
+        self.tx_name.configure(state=DISABLED)
+        self.tx_p_surname.configure(state=DISABLED)
+        self.tx_m_surname.configure(state=DISABLED)
+        self.tx_email.configure(state=DISABLED)
         
         # Apartir de aqui hacen falta pruebas
+        # Obtener la carrera del alumno
         career = db_user_career.get_carreer_by_user(self, values[0])
-        if career is None or career == "":
-            career = "No asignado"
+        self.opm_career.configure(state=ENABLE)
+        if career is None or career == "" or career == []:
+            self.opm_career.configure(values=self.careers)
+            self.opm_career.set("No asignado")
+            return
         
-        preregistro: list = db_preregistration.get_preregistration_by_user(self, values[0])
+        self.opm_career.set(career)
+        
+        # Obtener el preregistro del alumno
+        preregistro: list = db_preregistration.get_subjects_name_by_user(self, values[0])
+        
+        # Eliminar el contenido anterior
+        self.tx_subject.configure(state=ENABLE)
         self.tx_subject.delete(1.0, END)
+        
+        # Recorrer las materias y añadirlas al textbox
         for subject in preregistro:
-            subject = db_preregistration.get_subject_name_by_user(self, subject[0])
-        self.tx_subject.insert(1.0, preregistro)
-        if preregistro is None or preregistro == "":
-            self.tx_subject.insert(1.0, "")
-    
+            self.tx_subject.insert(1.0, subject + "\n")
+        
+        self.tx_subject.configure(state=DISABLED)
+        
     def edit_student(self) -> None:
         try:
             self.get_student()
@@ -225,28 +271,49 @@ class Students(Frame):
             print("[-] ", err)
             messagebox.showerror(ERROR_TITLE, err)
             return
-        
-        self.band = False
     
     # region Funciones extras
     def _return(self) -> None:
         self.controller.show_frame("Menu")
     
     def clear_student(self):
+        self.tx_id.configure(state=ENABLE)
+        self.tx_name.configure(state=ENABLE)
+        self.tx_p_surname.configure(state=ENABLE)
+        self.tx_m_surname.configure(state=ENABLE)
+        self.tx_email.configure(state=ENABLE)
+        
         self.tx_id.delete(0, END)
         self.tx_name.delete(0, END)
         self.tx_p_surname.delete(0, END)
         self.tx_m_surname.delete(0, END)
         self.tx_email.delete(0, END)
-        self.opm_career.set("INNI")
+        self.opm_career.set("")
         self.opm_subject.set("")
+        
+        self.tx_id.configure(state=ENABLE)
+        self.tx_name.configure(state=ENABLE)
+        self.tx_p_surname.configure(state=ENABLE)
+        self.tx_m_surname.configure(state=ENABLE)
+        self.tx_email.configure(state=ENABLE)
     
     def default(self):
+        # Update career and subjects
+        if self.type.get_type() == "administrador":
+            self.careers = db_carreer.get_all_careers(self)
+            self.opm_career.configure(values=self.careers)
+            self.opm_career.set(self.careers[0])
+        
+        self.opm_subject.set("")
+        
         self.tx_id.configure(state=ENABLE)
         self.clear_student()
         self.bt_edit.configure(state=ENABLE)
         self.bt_save.configure(state=DISABLED)
-        self.bt_cancel.configure(state=DISABLED)
+        self.bt_cancel.configure(state=ENABLE)
+        
+        self.tx_subject.configure(state=ENABLE)
+        self.tx_subject.delete(1.0, END)
         
         self.tx_id.configure(state=DISABLED)
         self.tx_name.configure(state=DISABLED)
@@ -256,6 +323,10 @@ class Students(Frame):
         self.opm_career.configure(state=DISABLED)
         self.opm_subject.configure(state=DISABLED)
         self.tx_subject.configure(state=DISABLED)
+        
+        if self.type.get_type() == "alumno":
+            self.table.focus(0)
+            self.get_student()
     
     def enable_edit(self):
         self.bt_save.configure(state=ENABLE)
@@ -267,8 +338,10 @@ class Students(Frame):
         self.tx_p_surname.configure(state=ENABLE)
         self.tx_m_surname.configure(state=ENABLE)
         self.tx_email.configure(state=ENABLE)
-        self.opm_career.configure(state=ENABLE)
-        self.opm_subject.configure(state=ENABLE)
+        if self.type.get_type() == "administrador":
+            self.opm_career.configure(state=ENABLE)
+        elif self.type.get_type() == "alumno":
+            self.opm_subject.configure(state=ENABLE)
         self.clear_student()
     
     # region Tabla
@@ -281,7 +354,10 @@ class Students(Frame):
         
     def update_table(self) -> None:
         self.clear_table()
-        students = db_user.get_all_students(self)
+        if self.type.get_type() == "administrador":
+            students = db_user.get_all_students(self)
+        elif self.type.get_type() == "alumno":
+            students = db_user.get_student_by_id(self, self.type.get_id())
         self.insert_table(students)
     
     # region Validación
@@ -293,5 +369,5 @@ class Students(Frame):
         if not self.tx_id.get().isdecimal():
             raise Exception("ID debe ser un número")
         
-        if self.opm_career.get() not in CAREER or self.opm_career.get() == "No asignado":
+        if self.opm_career.get() == "No asignado":
             raise Exception("Carrrera no válida")

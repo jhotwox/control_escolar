@@ -136,7 +136,24 @@ JOIN user_career uc ON u.id = uc.user_id
 JOIN career c ON uc.career_id = c.id
 WHERE u.type = 'alumno';
 
-SELECT c.name as career 
-FROM user_career uc
-JOIN career c ON uc.career_id = c.id
-WHERE uc.user_id = '1';
+SELECT s.name subject
+FROM pre_registration p, subject s
+WHERE s.id = p.subject_id
+AND user_id=2;
+
+SELECT c.name
+FROM user_career uc, career c
+WHERE uc.career_id = c.id
+AND user_id=2;
+
+-- materia-carrera
+SELECT s.name subject, c.name career
+FROM subject_career sc, subject s, career c
+WHERE sc.subject_id = s.id
+AND sc.career_id = c.id;
+
+-- materias por carrera
+SELECT s.name subject
+FROM subject_career sc, subject s
+WHERE sc.subject_id = s.id
+AND career_id=;

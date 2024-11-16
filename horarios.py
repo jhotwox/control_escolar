@@ -117,7 +117,6 @@ class Horario(Frame):
         return
 
     def update_table(self):
-        print("Actualizar tabla")
         return
 
     def _return(self):

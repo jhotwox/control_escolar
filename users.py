@@ -319,9 +319,16 @@ class Users(Frame):
         entry_empty(self.tx_password, "Contraseña")
         
         # Exist
-        aux = db_user.get_user_by_id(self, self.tx_id.get())
-        if not email_available(self.tx_email.get(), "user") and self.tx_email.get() != aux.get_email():
-            raise Exception("El correo ya existe")
+        
+        # Nuevo
+        if self.band:
+            if not email_available(self.tx_email.get(), "user"):
+                raise Exception("El correo ya existe")
+        # Editar
+        else:
+            aux = db_user.get_user_by_id(self, self.tx_id.get())
+            if not email_available(self.tx_email.get(), "user") and self.tx_email.get() != aux.get_email():
+                raise Exception("El correo ya existe")
         
         # Type
         if not self.tx_id.get().isdecimal():

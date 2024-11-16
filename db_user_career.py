@@ -38,6 +38,19 @@ class db_user_career:
             raise Exception(f"Error al eliminar usuario-carrera: {err}")
         finally:
             self.conn.close()
+
+    def remove_by_user(self, user_id: int) -> None:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"DELETE FROM {table} WHERE user_id={user_id}"
+            self.cursor.execute(self.sql)
+            self.conn.commit()
+        except Exception as err:
+            print(f"[-] remove_by_user in db_user_career: {err}")
+            raise Exception(f"Error al eliminar usuario-carrera: {err}")
+        finally:
+            self.conn.close()
     
     def get_all_user_carreer(self) -> list:
         try:
@@ -60,13 +73,16 @@ class db_user_career:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"SELECT career FROM {table} WHERE user_id={user_id}"
+            self.sql = f"""
+                SELECT c.name
+                FROM {table} uc, career c
+                WHERE uc.career_id = c.id
+                AND user_id={user_id}
+                """
             self.cursor.execute(self.sql)
             rows = self.cursor.fetchone()
             self.conn.commit()
-            if rows is None:
-                raise Exception("No se encontro la carrera del usuario")
-            return rows
+            return rows[0] if rows is not None else ""
         except Exception as err:
             print("[-] get_carreer_by_user: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
