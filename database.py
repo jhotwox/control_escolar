@@ -6,8 +6,8 @@ class conection:
         self.user = "root"
         self.password = ""
         self.database = "control_escolar"
-        self.host = "localhost"
-        
+        self.host = "127.0.0.1"
+    
     def open(self):
         try:
             self.conn = mysql.connect(

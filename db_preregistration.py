@@ -3,14 +3,14 @@ import mysql.connector as mysql
 import database as db
 from functions import ERROR_TITLE
 
-table = "pre_registration"
+TABLE = "pre_registration"
 
 class db_preregistration:
     def save(self, user_id: int, subject_id: int) -> None:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"INSERT INTO {table}(user_id, subject_id) values (%s,%s)"
+            self.sql = f"INSERT INTO {TABLE}(user_id, subject_id) values (%s,%s)"
             self.data = (
                 user_id,
                 subject_id
@@ -30,7 +30,7 @@ class db_preregistration:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"DELETE FROM {table} WHERE subject_id={subject_id} AND user_id={user_id}"
+            self.sql = f"DELETE FROM {TABLE} WHERE subject_id={subject_id} AND user_id={user_id}"
             self.cursor.execute(self.sql)
             self.conn.commit()
         except Exception as err:
@@ -43,7 +43,7 @@ class db_preregistration:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"DELETE FROM {table} WHERE user_id={user_id}"
+            self.sql = f"DELETE FROM {TABLE} WHERE user_id={user_id}"
             self.cursor.execute(self.sql)
             self.conn.commit()
         except Exception as err:
@@ -56,7 +56,7 @@ class db_preregistration:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"SELECT * FROM {table}"
+            self.sql = f"SELECT * FROM {TABLE}"
             self.cursor.execute(self.sql)
             rows = self.cursor.fetchall()
             self.conn.commit()
@@ -69,11 +69,11 @@ class db_preregistration:
         finally:
             self.conn.close()
     
-    def get_subject_id_by_user(self, user_id: int) -> list:
+    def get_subjects_id_by_user(self, user_id: int) -> list:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"SELECT subject_id FROM {table} WHERE user_id={user_id}"
+            self.sql = f"SELECT subject_id FROM {TABLE} WHERE user_id={user_id}"
             self.cursor.execute(self.sql)
             rows = self.cursor.fetchall()
             self.conn.commit()
@@ -86,17 +86,16 @@ class db_preregistration:
         finally:
             self.conn.close()
     
-    #TODO: No esta bien hecho
-    def get_subject_name_by_user(self, user_id: int) -> list:
+    def get_subjects_name_by_user(self, user_id: int) -> list:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"SELECT subject_name FROM {table} WHERE user_id={user_id}"
+            self.sql = f"SELECT s.name FROM {TABLE} p, subject s WHERE s.id = p.subject_id AND user_id={user_id}"
             self.cursor.execute(self.sql)
             rows = self.cursor.fetchall()
             self.conn.commit()
             if rows is None:
-                raise Exception("No se encontraron preregistros")
+                return []
             return [row[0] for row in rows]
         except Exception as err:
             print("[-] get_preregistration_by_user: ", err)

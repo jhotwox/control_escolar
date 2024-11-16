@@ -104,6 +104,23 @@ class db_user:
         finally:
             self.conn.close()
             
+    def get_student_by_id(self, id: int) -> list:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"SELECT id, u.name, u.p_surname, u.m_surname, u.email FROM {table} u WHERE type='alumno' AND id={id}"
+            self.cursor.execute(self.sql)
+            rows = self.cursor.fetchall()
+            self.conn.commit()
+            if rows is None:
+                raise Exception("No se encontro el alumno")
+            return rows
+        except Exception as err:
+            print("[-] get_student_by_id: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error en la consulta")
+        finally:
+            self.conn.close()
+            
     def get_user_by_id(self, id: int) -> user_class:
         try:
             self.conn = db.conection().open()

@@ -20,11 +20,11 @@ class Login(Frame):
 
         self.tx_email = Entry(self, width=200, placeholder_text="Correo")
         self.tx_email.grid(row=1, column=1, padx=20, pady=10)
-        self.tx_email.insert(0, "")
+        self.tx_email.insert(0, "correo@gmail.com")
         
         self.tx_pass = Entry(self, width=200, placeholder_text="Contraseña", show="*")
         self.tx_pass.grid(row=2, column=1, padx=20, pady=10)
-        self.tx_pass.insert(0, "")
+        self.tx_pass.insert(0, "123456")
         
         self.btLogin = Button(self, text="Ingresar", command=self.login)
         self.btLogin.grid(row=3, column=1, pady=15)
@@ -75,7 +75,8 @@ class Login(Frame):
         # Ventanas a crear en caso de que sea alumno
         if self.user.get_type() == TYPE[2]:
             windows = {
-                "Menu": Menu
+                "Menu": Menu,
+                "Students": Students
             }
         
         # Recorrer las clases
