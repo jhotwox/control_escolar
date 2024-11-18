@@ -8,6 +8,7 @@ from users import Users
 from students import Students
 from horarios import Horario
 from teachers import Teachers
+from subjects import Subjects
 from constants import TYPE
 
 class Login(Frame):
@@ -67,7 +68,8 @@ class Login(Frame):
                 "Users": Users,
                 "Students": Students,
                 "Teachers": Teachers,
-                "Schedules": Horario
+                "Schedules": Horario,
+                "Subjects": Subjects
             }
         
         # Ventanas a crear en caso de que sea maestro
