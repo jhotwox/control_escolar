@@ -2,13 +2,13 @@ from customtkinter import END, CTkButton as Button, CTkEntry as Entry, CTkLabel 
 from tkinter import messagebox
 from tkinter.ttk import Treeview
 from functions import entry_empty, is_alphabetic, find_id, validate_email, INFO_TITLE, WARNING_TITLE, ERROR_TITLE
-from db_subject import db_subject
-from subject import subject as subject_class
+from db_career import career_class
+from career import career as career_class
 from table_style import apply_style
 from constants import TYPE
 from user import user as teacher_class
 
-class Subjects(Frame):
+class Careers(Frame):
     # region Interfaz
     def __init__(self, container, controller, type: teacher_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
@@ -31,7 +31,7 @@ class Subjects(Frame):
         self.lb_search.grid(row=0, column=0, padx=5)
         self.tx_search = Entry(fr_search, placeholder_text="ID a buscar", width=200)
         self.tx_search.grid(row=0, column=1,  padx=10, pady=10)
-        self.bt_search = Button(fr_search, text="Buscar", border_width=2, width=100, command=self.search_subject)
+        self.bt_search = Button(fr_search, text="Buscar", border_width=2, width=100, command=self.search_career)
         self.bt_search.grid(row=0, column=2, padx=5, pady=10)
 
         self.lb_id = Label(fr_entry, text="ID")
@@ -74,15 +74,15 @@ class Subjects(Frame):
         self.table.heading("ID", text="ID", anchor="center")
         self.table.heading("Nombre", text="Nombre", anchor="center")
 
-        self.bt_new = Button(fr_button, text="Nuevo", border_width=1, width=60, command=self.new_subject)
+        self.bt_new = Button(fr_button, text="Nuevo", border_width=1, width=60, command=self.new_career)
         self.bt_new.grid(row=0, column=0, padx=5, pady=10)
-        self.bt_save = Button(fr_button, text="Salvar", border_width=1, width=60, command=self.save_subject)
+        self.bt_save = Button(fr_button, text="Salvar", border_width=1, width=60, command=self.save_career)
         self.bt_save.grid(row=0, column=1, padx=5, pady=10)
         self.bt_cancel = Button(fr_button, text="Cancelar", border_width=1, width=60, command=self.default)
         self.bt_cancel.grid(row=0, column=2, padx=5, pady=10)
-        self.bt_edit = Button(fr_button, text="Editar", border_width=1, width=60, command=self.edit_subject)
+        self.bt_edit = Button(fr_button, text="Editar", border_width=1, width=60, command=self.edit_career)
         self.bt_edit.grid(row=0, column=3, padx=5, pady=10)
-        self.bt_remove = Button(fr_button, text="Eliminar", border_width=1, width=60, command=self.remove_subject)
+        self.bt_remove = Button(fr_button, text="Eliminar", border_width=1, width=60, command=self.remove_career)
         self.bt_remove.grid(row=0, column=4, padx=5, pady=10)
         self.bt_update = Button(fr_button, text="Actualizar", border_width=1, width=60, command=self.update_table)
         self.bt_update.grid(row=0, column=5, padx=5, pady=10)
@@ -93,29 +93,29 @@ class Subjects(Frame):
         self.update_table()
 
     # region Funciones SQL
-    def search_subject(self) -> None:
+    def search_career(self) -> None:
         pass
     
-    def remove_subject(self) -> None:
+    def remove_career(self) -> None:
         pass
 
-    def new_subject(self) -> None:
+    def new_career(self) -> None:
         pass
 
-    def save_subject(self) -> None:
+    def save_career(self) -> None:
         pass
 
-    def get_subject(self) -> None:
+    def get_career(self) -> None:
         pass
 
-    def edit_subject(self) -> None:
+    def edit_career(self) -> None:
         pass
 
     # region Funciones extras
     def _return(self) -> None:
         self.controller.show_frame("Menu")
 
-    def clear_edit_subject(self):
+    def clear_edit_career(self):
         pass
 
     def default(self):

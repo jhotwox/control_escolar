@@ -34,11 +34,11 @@ San Lupercio, ten piedad de nosotros 🙏
 
 >TODO: Maestros ❌ (50%) (Cris)
 
->TODO: Materias ❌ (Joel)
+>TODO: Materias ❌ (50%) (Joel)
 
 >TODO: Horarios ❌ (Edwin)
 
->TODO: Carreras ❌ (Joel)
+>TODO: Carreras ❌ (50%) (Joel)
 
 >TODO: Edificios ❌ (Joel)
 
