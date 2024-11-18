@@ -2,11 +2,12 @@ from customtkinter import CTkButton as Button, CTkEntry as Entry, CTkLabel as La
 from tkinter import messagebox
 from functions import is_empty, WARNING_TITLE
 from db_user import db_user
-from user import user as user_class
+from user import user as teacher_class
 from menu import Menu
 from users import Users
 from students import Students
 from horarios import Horario
+from teachers import Teachers
 from constants import TYPE
 
 class Login(Frame):
@@ -54,7 +55,7 @@ class Login(Frame):
             return
         
         try:
-            aux = user_class(email=email, password=password)
+            aux = teacher_class(email=email, password=password)
             self.user = db_user.authenticate(self, aux)
         except:
             return
@@ -65,13 +66,15 @@ class Login(Frame):
                 "Menu": Menu,
                 "Users": Users,
                 "Students": Students,
-                "Horarios": Horario
+                "Teachers": Teachers,
+                "Schedules": Horario
             }
         
         # Ventanas a crear en caso de que sea maestro
         if self.user.get_type() == TYPE[1]:
             windows = {
-                "Menu": Menu
+                "Menu": Menu,
+                "Teachers": Teachers
             }
         
         # Ventanas a crear en caso de que sea alumno

@@ -29,7 +29,10 @@ class db_horarios:
             print(f"[-] save in db_horarios: {err}")
             raise Exception(f"Error al guardar horarios: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def edit(self, shedule: horario_class) -> None:
         try:
@@ -50,7 +53,10 @@ class db_horarios:
             print(f"[-] edit in db_horarios: {err}")
             raise Exception(f"Error al editar horarios: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
         
     def remove(self, shedule: horario_class) -> None:
         try:
@@ -63,7 +69,10 @@ class db_horarios:
             print(f"[-] remove in db_horarios: {err}")
             raise Exception(f"Error al eliminar usuario: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
         
     def get_max_id(self) -> int:
         return max_id(table)
@@ -83,7 +92,10 @@ class db_horarios:
             print("[-] get_all_horarios: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
             
     def get_horario_by_id(self, id: int) -> horario_class:
         try:
@@ -100,7 +112,10 @@ class db_horarios:
             print("[-] get_horario_by_id: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
         
     def close(self):
         self.conn.close()

@@ -3,14 +3,14 @@ from tkinter import messagebox
 from tkinter.ttk import Treeview
 from functions import entry_empty, is_alphabetic, find_id, validate_email, INFO_TITLE, WARNING_TITLE, ERROR_TITLE
 from db_user import db_user
-from user import user as user_class
+from user import user as teacher_class
 from table_style import apply_style
 from db_functions import email_available
 from constants import TYPE
 
 class Users(Frame):
     # region Interfaz
-    def __init__(self, container, controller, type: user_class, *args, **kwargs):
+    def __init__(self, container, controller, type: teacher_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         
         self.controller = controller
@@ -158,7 +158,7 @@ class Users(Frame):
                 return
             
             values = self.table.item(selected, "values")
-            aux = user_class(id=int(values[0]))
+            aux = teacher_class(id=int(values[0]))
             db_user.remove(self, aux)
             messagebox.showinfo(INFO_TITLE, "Usuario eliminado")
             self.update_table()
@@ -200,7 +200,7 @@ class Users(Frame):
             return
         
         try:
-            user = user_class(
+            user = teacher_class(
                 int(self.tx_id.get()),
                 self.tx_name.get(),
                 self.tx_p_surname.get(),

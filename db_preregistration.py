@@ -24,7 +24,10 @@ class db_preregistration:
             print(f"[-] save in db_preregistration: {err}")
             raise Exception(f"Error al guardar preregistro: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def remove(self, user_id: int, subject_id: int) -> None:
         try:
@@ -37,7 +40,10 @@ class db_preregistration:
             print(f"[-] remove in db_preregistration: {err}")
             raise Exception(f"Error al eliminar preregistro: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
 
     def remove_all_by_user(self, user_id: int) -> None:
         try:
@@ -50,7 +56,10 @@ class db_preregistration:
             print(f"[-] remove_all_by_user in db_preregistration: {err}")
             raise Exception(f"Error al eliminar preregistros del estudiante: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def get_all_preregistration(self) -> list:
         try:
@@ -67,7 +76,10 @@ class db_preregistration:
             print("[-] get_all_preregistration: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def get_subjects_id_by_user(self, user_id: int) -> list:
         try:
@@ -84,7 +96,10 @@ class db_preregistration:
             print("[-] get_preregistration_by_user: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def get_subjects_name_by_user(self, user_id: int) -> list:
         try:
@@ -101,7 +116,10 @@ class db_preregistration:
             print("[-] get_preregistration_by_user: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
                 
     def close(self):
         self.conn.close()

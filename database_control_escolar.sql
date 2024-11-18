@@ -157,3 +157,34 @@ SELECT s.name subject
 FROM subject_career sc, subject s
 WHERE sc.subject_id = s.id
 AND career_id=;
+
+-- Obtener maestro por id (mal)
+SELECT u.id, u.name, u.p_surname, u.m_surname, u.email, t.cedula
+FROM user u, teacher t
+WHERE u.id = t.id
+WHERE u.id=4;
+
+-- Obtener maestro por id (bien)
+SELECT id, name, p_surname, m_surname, email
+FROM user
+WHERE type='maestro'
+AND id=4;
+
+-- Obtener todos los maestros
+SELECT id, name, p_surname, m_surname, email
+FROM user
+WHERE type='maestro';
+
+-- Obtener las materias del maestro
+SELECT s.name
+FROM user_subject us, subject s
+WHERE us.subject_id = s.id
+AND us.user_id=4;
+
+-- Obtener las materias del maestro con la carrera
+SELECT s.name
+FROM user_subject us, subject s, subject_career sc
+WHERE us.subject_id = s.id
+AND s.id = sc.subject_id
+AND sc.career_id=1
+AND us.user_id=4;

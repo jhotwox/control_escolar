@@ -1,14 +1,14 @@
 from tkinter import messagebox
 import mysql.connector as mysql
 import database as db
-from user import user as user_class
+from user import user as teacher_class
 from db_functions import max_id
 from functions import ERROR_TITLE, WARNING_TITLE
 
 table = "user"
 
 class db_user:    
-    def save(self, user: user_class) -> None:
+    def save(self, user: teacher_class) -> None:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
@@ -31,9 +31,12 @@ class db_user:
             print(f"[-] save in db_user: {err}")
             raise Exception(f"Error al guardar usuario: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
-    def edit(self, user: user_class) -> None:
+    def edit(self, user: teacher_class) -> None:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
@@ -52,9 +55,12 @@ class db_user:
             print(f"[-] edit in db_user: {err}")
             raise Exception(f"Error al editar usuario: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
         
-    def remove(self, user: user_class) -> None:
+    def remove(self, user: teacher_class) -> None:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
@@ -65,7 +71,10 @@ class db_user:
             print(f"[-] remove in db_user: {err}")
             raise Exception(f"Error al eliminar usuario: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
         
     def get_max_id(self) -> int:
         return max_id(table)
@@ -85,7 +94,10 @@ class db_user:
             print("[-] get_all_users: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def get_all_students(self) -> list:
         try:
@@ -102,7 +114,10 @@ class db_user:
             print("[-] get_all_students: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
             
     def get_student_by_id(self, id: int) -> list:
         try:
@@ -119,9 +134,12 @@ class db_user:
             print("[-] get_student_by_id: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
             
-    def get_user_by_id(self, id: int) -> user_class:
+    def get_user_by_id(self, id: int) -> teacher_class:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
@@ -131,14 +149,17 @@ class db_user:
             self.conn.commit()
             if row is None:
                 raise Exception("No se encontro el usuario")
-            return user_class(int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6])
+            return teacher_class(int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6])
         except Exception as err:
             print("[-] get_user_by_id: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
-    def authenticate(self, user: user_class) -> user_class:
+    def authenticate(self, user: teacher_class) -> teacher_class:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
@@ -148,7 +169,7 @@ class db_user:
             self.conn.commit()
             if row is not None:
                 if user.get_password() == row[4]:
-                    return user_class(int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6])
+                    return teacher_class(int(row[0]), row[1], row[2], row[3], row[4], row[5], row[6])
                 else:
                     messagebox.showwarning(WARNING_TITLE, "La contraseña no coincide")
                     raise Exception("La contraseña no coincide")
@@ -163,7 +184,10 @@ class db_user:
             print(f"[-] {err}")
             raise Exception(f"Error al autenticar: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
         
     def close(self):
         self.conn.close()

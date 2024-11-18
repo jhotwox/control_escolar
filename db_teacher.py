@@ -1,21 +1,21 @@
 from tkinter import messagebox
 import mysql.connector as mysql
 import database as db
-from career import career as career_class
-from db_functions import max_id
+from user import user as teacher_class
+from teacher import teacher as teacher_class
 from functions import ERROR_TITLE
 
-table = "career"
+table = "teacher"
 
-class db_carreer:
-    def save(self, career: career_class) -> None:
+class db_teacher:    
+    def save(self, teacher: teacher_class) -> None:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"INSERT INTO {table}(id, name) values (%s,%s)"
+            self.sql = f"INSERT INTO {table}(id, cedula) values (%s,%s)"
             self.data = (
-                career.get_id(),
-                career.get_name()
+                teacher.get_id(),
+                teacher.get_cedula()
             )
             self.cursor.execute(self.sql, self.data)
             self.conn.commit()
@@ -23,69 +23,64 @@ class db_carreer:
             print(f"[-] Mysql: {err}")
             raise Exception(f"Error en la BD: {err}")
         except Exception as err:
-            print(f"[-] save in db_career: {err}")
-            raise Exception(f"Error al guardar carrera: {err}")
+            print(f"[-] save in db_teacher: {err}")
+            raise Exception(f"Error al guardar maestro: {err}")
         finally:
             if self.cursor:
                 self.cursor.close()
             if self.conn:
                 self.conn.close()
     
-    def edit(self, career: career_class) -> None:
+    def edit(self, teacher: teacher_class) -> None:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"UPDATE {table} SET name=%s WHERE id={career.get_id()}"
-            self.data = (
-                career.get_name()
-                )
+            self.sql = f"UPDATE {table} SET cedula=%s WHERE id={teacher.get_id()}"
+            self.data = (teacher.get_cedula())
             self.cursor.execute(self.sql, self.data)
             self.conn.commit()
         except Exception as err:
-            print(f"[-] edit in db_career: {err}")
-            raise Exception(f"Error al editar carrera: {err}")
+            print(f"[-] edit in db_teacher: {err}")
+            raise Exception(f"Error al editar maestro: {err}")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
+        
+    def remove(self, teacher: teacher_class) -> None:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"DELETE FROM {table} WHERE id={teacher.get_id()}"
+            self.cursor.execute(self.sql)
+            self.conn.commit()
+        except Exception as err:
+            print(f"[-] remove in db_teacher: {err}")
+            raise Exception(f"Error al eliminar maestro: {err}")
         finally:
             if self.cursor:
                 self.cursor.close()
             if self.conn:
                 self.conn.close()
     
-    def get_max_id(self) -> int:
-        return max_id(table)
-    
-    def get_all_careers(self) -> list:
+    def get_all_teachers(self) -> list:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"SELECT name FROM {table}"
+            self.sql = """
+                SELECT id, name, p_surname, m_surname, email
+                FROM user
+                WHERE type='maestro';
+            """
             self.cursor.execute(self.sql)
             rows = self.cursor.fetchall()
             self.conn.commit()
             if rows is None:
-                raise Exception("No se encontraron carreras")
-            return [row[0] for row in rows] if len(rows) > 0 else [""]
+                raise Exception("No se encontraron maestros")
+            return rows
         except Exception as err:
-            print("[-] get_all_carrers: ", err)
-            messagebox.showerror(ERROR_TITLE, "Error en la consulta")
-        finally:
-            if self.cursor:
-                self.cursor.close()
-            if self.conn:
-                self.conn.close()
-
-    def get_all_careers_dict(self) -> dict:
-        try:
-            self.conn = db.conection().open()
-            self.cursor = self.conn.cursor()
-            self.sql = f"SELECT id, name FROM {table}"
-            self.cursor.execute(self.sql)
-            rows = self.cursor.fetchall()
-            self.conn.commit()
-            if rows is None:
-                raise Exception("No se encontraron carreras")
-            return {row[0]: row[1] for row in rows} if len(rows) > 0 else {0: ""}
-        except Exception as err:
-            print("[-] get_all_carrers_dict: ", err)
+            print("[-] get_all_teachers: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
             if self.cursor:
@@ -93,40 +88,46 @@ class db_carreer:
             if self.conn:
                 self.conn.close()
             
-    def get_carrer_by_id(self, id: int) -> career_class:
+    def get_teacher_by_id(self, id: int) -> list:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"SELECT * FROM {table} WHERE id={id}"
+            self.sql = f"""
+                SELECT id, name, p_surname, m_surname, email
+                FROM user
+                WHERE type='maestro'
+                AND id={id}
+            """
             self.cursor.execute(self.sql)
-            row = self.cursor.fetchone()
+            rows = self.cursor.fetchall()
             self.conn.commit()
-            if row is None:
-                raise Exception("No se encontro la carrera")
-            return career_class(int(row[0]), row[1])
+            if rows is None:
+                raise Exception("No se encontro el maestro")
+            return rows
         except Exception as err:
-            print("[-] get_career_by_id: ", err)
+            print("[-] get_teacher_by_id: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
             if self.cursor:
                 self.cursor.close()
             if self.conn:
                 self.conn.close()
-
-    def get_id_by_name(self, name: str) -> int:
+    
+    def get_cedula_by_id(self, id: int) -> str:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            # print("get_id_by_name: name ->", name)
-            self.sql = f"SELECT id FROM {table} WHERE name='{name}'"
+            self.sql = f"""
+                SELECT cedula
+                FROM {table}
+                WHERE id={id}
+            """
             self.cursor.execute(self.sql)
-            row = self.cursor.fetchone()
+            rows = self.cursor.fetchone()
             self.conn.commit()
-            if row is None:
-                raise Exception("No se encontro el id de la carrera")
-            return row[0]
+            return None if rows is None else rows[0]
         except Exception as err:
-            print("[-] get_id_by_name: ", err)
+            print("[-] get_cedula_by_id: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
             if self.cursor:

@@ -7,11 +7,11 @@ from horario import Horario as horario_class
 from table_style import apply_style
 from db_functions import email_available
 from constants import TYPE
-from user import user as user_class
+from user import user as teacher_class
 
 class Horario(Frame):
     # region Interfaz
-    def __init__(self, container, controller, type: user_class, *args, **kwargs):
+    def __init__(self, container, controller, type: teacher_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         
         self.controller = controller

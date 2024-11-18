@@ -24,7 +24,10 @@ class db_subject_career:
             print(f"[-] save in db_subject_career: {err}")
             raise Exception(f"Error al guardar materia-carrera: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def remove(self, subject_id: int, career_id: int) -> None:
         try:
@@ -37,7 +40,10 @@ class db_subject_career:
             print(f"[-] remove in db_subject_career: {err}")
             raise Exception(f"Error al eliminar materia-carrera: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def get_all_subject_carreer(self) -> list:
         try:
@@ -54,7 +60,10 @@ class db_subject_career:
             print("[-] get_all_subject_career: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
             
     def close(self):
         self.conn.close()

@@ -4,7 +4,7 @@ from tkinter.ttk import Treeview
 from functions import entry_empty, find_id, INFO_TITLE, WARNING_TITLE, ERROR_TITLE
 from table_style import apply_style
 from db_user import db_user
-from user import user as user_class
+from user import user as teacher_class
 from db_subject import db_subject
 from db_preregistration import db_preregistration
 from db_user_career import db_user_career
@@ -12,11 +12,11 @@ from db_career import db_carreer
 
 class Students(Frame):
     # region Interfaz
-    def __init__(self, container, controller, type: user_class, *args, **kwargs):
+    def __init__(self, container, controller, type: teacher_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         
         self.controller = controller
-        self.type: user_class = type
+        self.type: teacher_class = type
         
         fr_search = Frame(self)
         fr_search.grid(row=0, column=0, sticky="nsw", padx=10, pady=10)
@@ -188,7 +188,6 @@ class Students(Frame):
         self.table.focus(id)
         self.table.see(id)
     
-    #TODO: Guardar preregistro
     def save(self) -> None:
         try:
             self.validate()
@@ -221,7 +220,6 @@ class Students(Frame):
             print(f"[-] save: {err}")
             messagebox.showerror(ERROR_TITLE, f"Error al guardar")
     
-    #TODO: Obtener estudiante al seleccionar en la tabla
     def get_student(self) -> None:
         selected = self.table.focus()
         if selected is None or selected == "":
@@ -240,7 +238,6 @@ class Students(Frame):
         self.tx_m_surname.configure(state=DISABLED)
         self.tx_email.configure(state=DISABLED)
         
-        # Apartir de aqui hacen falta pruebas
         # Obtener la carrera del alumno
         career = db_user_career.get_carreer_by_user(self, values[0])
         self.opm_career.configure(state=ENABLE)

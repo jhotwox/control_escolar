@@ -1,9 +1,9 @@
 from customtkinter import CTkButton as Button, CTkFrame as Frame, CTkLabel as Label
-from user import user as user_class
+from user import user as teacher_class
 from constants import TYPE
 
 class Menu(Frame):
-    def __init__(self, container, controller, profile: user_class, *args, **kwargs):
+    def __init__(self, container, controller, profile: teacher_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         
         self.controller = controller
@@ -67,15 +67,14 @@ class Menu(Frame):
         self.controller.show_frame("Students")
 
     def open_teachers(self) -> None:
-        return
-        # self.controller.show_frame("Teachers")
+        self.controller.show_frame("Teachers")
     
     def open_subjects(self) -> None:
         return
         # self.controller.show_frame("Subjects")
 
     def open_schedules(self) -> None:
-        self.controller.show_frame("Horarios")
+        self.controller.show_frame("Schedules")
         
     def open_careers(self) -> None:
         return

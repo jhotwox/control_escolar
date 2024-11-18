@@ -28,11 +28,11 @@ San Lupercio, ten piedad de nosotros 🙏
 ### 12/11/24
 >TODO: Login ✅ (Cris)
 
->TODO: Usuarios ✅ (Cris)
+>TODO: Usuarios ✅ (Cris) (Falta que al eliminar un maestro, se elimine de la tabla de maestros)
 
->TODO: Alumnos ✅❌ (50%) (Cris)
+>TODO: Alumnos ✅❌ (90%) (Cris)
 
->TODO: Maestros ❌ (Cris)
+>TODO: Maestros ❌ (50%) (Cris)
 
 >TODO: Materias ❌ (Joel)
 

@@ -26,7 +26,10 @@ class db_subject:
             print(f"[-] save in db_subject: {err}")
             raise Exception(f"Error al guardar materia: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def edit(self, career: subject_class) -> None:
         try:
@@ -40,7 +43,10 @@ class db_subject:
             print(f"[-] edit in db_subject: {err}")
             raise Exception(f"Error al editar materia: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def remove(self, career: subject_class) -> None:
         try:
@@ -53,7 +59,10 @@ class db_subject:
             print(f"[-] remove in db_subject: {err}")
             raise Exception(f"Error al eliminar materia: {err}")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def get_max_id(self) -> int:
         return max_id(table)
@@ -73,7 +82,10 @@ class db_subject:
             print("[-] get_all_subjects: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
             
     def get_subject_by_id(self, id: int) -> subject_class:
         try:
@@ -90,7 +102,10 @@ class db_subject:
             print("[-] get_subject_by_id: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def get_subjects_by_career(self, career_id: int) -> list:
         try:
@@ -112,9 +127,12 @@ class db_subject:
             print("[-] get_subjects_by_career: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
-    def get_subjects_dict(self, career_id: int) -> dict:
+    def get_subjects_dict(self) -> dict:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
@@ -122,7 +140,6 @@ class db_subject:
                 SELECT s.id, s.name
                 FROM subject_career sc, subject s
                 WHERE sc.subject_id = s.id
-                AND career_id={career_id}
             """
             self.cursor.execute(self.sql)
             rows = self.cursor.fetchall()
@@ -134,7 +151,10 @@ class db_subject:
             print("[-] get_subjects_dict: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
-            self.conn.close()
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def close(self):
         self.conn.close()
