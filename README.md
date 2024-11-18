@@ -40,7 +40,7 @@ San Lupercio, ten piedad de nosotros 🙏
 
 >TODO: Carreras ❌ (50%) (Joel)
 
->TODO: Edificios ❌ (Joel)
+>TODO: Edificios ❌ (50%) (Joel)
 
 ### 19/11/24
 >TODO: Salones ❌ (Joel)

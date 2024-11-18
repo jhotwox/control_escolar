@@ -79,8 +79,7 @@ class Menu(Frame):
         self.controller.show_frame("Carreers")
         
     def open_buildings(self) -> None:
-        return
-        # self.controller.show_frame("Buildings")
+        self.controller.show_frame("Buildings")
         
     def open_classrooms(self) -> None:
         return
