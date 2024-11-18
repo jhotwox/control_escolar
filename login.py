@@ -11,6 +11,7 @@ from teachers import Teachers
 from subjects import Subjects
 from careers import Careers
 from buildings import Buildings
+from classrooms import Classrooms
 from constants import TYPE
 
 class Login(Frame):
@@ -73,7 +74,8 @@ class Login(Frame):
                 "Schedules": Horario,
                 "Subjects": Subjects,
                 "Carreers": Careers,
-                "Buildings": Buildings
+                "Buildings": Buildings,
+                "Classrooms": Classrooms
             }
         
         # Ventanas a crear en caso de que sea maestro

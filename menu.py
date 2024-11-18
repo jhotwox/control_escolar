@@ -82,8 +82,7 @@ class Menu(Frame):
         self.controller.show_frame("Buildings")
         
     def open_classrooms(self) -> None:
-        return
-        # self.controller.show_frame("Classrooms")
+        self.controller.show_frame("Classrooms")
         
     def open_groups(self) -> None:
         return
