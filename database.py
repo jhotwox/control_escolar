@@ -3,8 +3,8 @@ import mysql.connector as mysql
 
 class conection:
     def __init__(self):
-        self.user = "root"
-        self.password = ""
+        self.user = "usuario_sis"
+        self.password = "soporte"
         self.database = "control_escolar"
         self.host = "127.0.0.1"
     
