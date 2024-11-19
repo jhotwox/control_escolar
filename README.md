@@ -34,7 +34,7 @@ San Lupercio, ten piedad de nosotros 🙏
 
 >TODO: Maestros ❌ (50%) (Cris)
 
->TODO: Materias ❌ (50%) (Joel)
+>TODO: Materias ✅ (90%) (Joel) (Falta la función de eliminar materia)
 
 >TODO: Horarios ❌ (Edwin)
 
@@ -43,7 +43,7 @@ San Lupercio, ten piedad de nosotros 🙏
 >TODO: Edificios ❌ (50%) (Joel)
 
 ### 19/11/24
->TODO: Salones ❌ (Joel)
+>TODO: Salones ❌ (50%) (Joel)
 
 >TODO: Registro ❌ (Cris)
 

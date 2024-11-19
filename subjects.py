@@ -6,15 +6,15 @@ from db_subject import db_subject
 from subject import subject as subject_class
 from table_style import apply_style
 from constants import TYPE
-from user import user as teacher_class
 
 class Subjects(Frame):
     # region Interfaz
-    def __init__(self, container, controller, type: teacher_class, *args, **kwargs):
+    def __init__(self, container, controller, type: subject_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
 
         self.controller = controller
         self.type = type
+        self.band = None
         
         self.TYPE_DICT = TYPE
 
@@ -94,46 +94,169 @@ class Subjects(Frame):
 
     # region Funciones SQL
     def search_subject(self) -> None:
-        pass
+        if not self.tx_search.get().isdecimal():
+            messagebox.showwarning(ERROR_TITLE, "Ingrese un ID valido")
+            return
+        
+        def search_id():
+            for item in self.table.get_children():
+                item_values = self.table.item(item, "values")
+                
+                if item_values[0] == self.tx_search.get():
+                    return item
+            return None
+        
+        id = search_id()
+        if id is None:
+            messagebox.showwarning(WARNING_TITLE, "No se encontro la materia")
+            return
+        
+        self.table.selection_set(id)
+        self.table.focus(id)
+        self.table.see(id)
     
     def remove_subject(self) -> None:
         pass
 
     def new_subject(self) -> None:
-        pass
+        self.tx_search.configure(state=DISABLED)
+        self.bt_search.configure(state=DISABLED)
+
+        self.tx_id.configure(state=ENABLE)
+        self.tx_name.configure(state=ENABLE)
+
+        self.bt_new.configure(state=DISABLED)
+        self.bt_save.configure(state=ENABLE)
+        self.bt_cancel.configure(state=ENABLE)    
+        self.bt_edit.configure(state=DISABLED)
+        self.bt_remove.configure(state=DISABLED)
+        self.bt_update.configure(state=DISABLED)
+        self.bt_return.configure(state=DISABLED)
+
+        self.clear_subject
+        self.tx_id.insert(0, db_subject.get_max_id(self)+1)
+        self.tx_id.configure(state=DISABLED)
+        self.band = True
+        return
 
     def save_subject(self) -> None:
-        pass
+        try:
+            self.validate()  # Llamada a la validación general
+        except Exception as error:
+            messagebox.showwarning(WARNING_TITLE, error)
+            return
+        
+        try:
+            materia = subject_class(
+                int(self.tx_id.get()),
+                self.tx_name.get()
+            )
+
+            if self.band == True:
+                db_subject.save(self, materia)
+                messagebox.showinfo(INFO_TITLE, "Materia guardada exitosamente!")
+            else:
+                db_subject.edit(self, materia)
+                messagebox.showinfo(INFO_TITLE, "Materia editada exitosamente!")
+            self.default()
+            self.update_table()
+        except Exception as err:
+            print(f"[-] saveSubject: {err}")
+            messagebox.showerror(ERROR_TITLE, f"Error al {'guardar' if self.band else 'editar'} Materia en BD")
+        finally:
+            self.band = None
 
     def get_subject(self) -> None:
-        pass
+        selected = self.table.focus()
+        if selected is None or selected == "":
+            raise Exception("No se encontro la materia")
+        
+        values = self.table.item(selected, "values")
+        self.enable_edit()
+        self.tx_id.insert(0, values[0])
+        self.tx_name.insert(0, values[1])
+        self.tx_id.configure(state=DISABLED)
 
     def edit_subject(self) -> None:
-        pass
+        try:
+            self.get_subject()
+        except Exception as err:
+            print("[-] ", err)
+            messagebox.showerror(ERROR_TITLE, err)
+            return
+        
+        self.band = False
 
     # region Funciones extras
     def _return(self) -> None:
         self.controller.show_frame("Menu")
 
-    def clear_edit_subject(self):
-        pass
+    def clear_subject(self):
+        self.tx_id.delete(0, END)
+        self.tx_name.delete(0, END)
 
     def default(self):
-        pass
+        self.tx_id.configure(state=ENABLE)
+        self.clear_subject()
+        self.tx_search.configure(state=ENABLE)
+        self.bt_search.configure(state=ENABLE)
 
+        self.tx_id.configure(state=DISABLED)
+        self.tx_name.configure(state=DISABLED)
+
+        self.bt_new.configure(state=ENABLE)
+        self.bt_save.configure(state=DISABLED)
+        self.bt_cancel.configure(state=DISABLED)
+        self.bt_edit.configure(state=ENABLE)
+        self.bt_remove.configure(state=ENABLE)
+        self.bt_update.configure(state=ENABLE)
+        self.bt_return.configure(state=ENABLE)
+        
     def enable_edit(self):
-        pass
+        self.bt_new.configure(state=DISABLED)
+        self.bt_save.configure(state=ENABLE)
+        self.bt_cancel.configure(state=ENABLE)
+        self.bt_edit.configure(state=DISABLED)
+        self.bt_remove.configure(state=DISABLED)
+
+        self.bt_search.configure(state=DISABLED)
+        self.tx_search.configure(state=DISABLED)
+        self.tx_id.configure(state=ENABLE)
+        self.tx_name.configure(state=ENABLE)
+        self.clear_subject()
 
     #region Tabla
     def insert_table(self, data: list) -> None:
-        pass
+        for i, row in enumerate(data):
+            self.table.insert("", "end", iid=i, values=row)
 
     def clear_table(self) -> None:
-        pass
+        self.table.delete(*self.table.get_children())
 
     def update_table(self) -> None:
-        pass
+        self.clear_table()
+        materias = db_subject.get_all_subjects(self)
+        self.insert_table(materias)
 
     # region Validación
     def validate(self) -> None:
-        pass
+        #Empty
+        entry_empty(self.tx_id, "ID")
+        entry_empty(self.tx_name, "Nombre")
+
+        #Size
+        if len(self.tx_name.get()) > 30:
+            raise Exception("El nombre de la materia es demasiado largo")
+        
+        # Verificar duplicados en la tabla
+        subject_name = self.tx_name.get().strip()
+        for item in self.table.get_children():
+            item_values = self.table.item(item, "values")
+            
+            # Saltar el registro actual en caso de edición
+            if item_values[0] == self.tx_id.get():
+                continue
+            
+            # Comparar nombres de manera insensible a mayúsculas/minúsculas
+            if item_values[1].strip().lower() == subject_name.lower():
+                raise Exception("La carrera ya existe.")

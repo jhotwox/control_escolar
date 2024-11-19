@@ -36,7 +36,7 @@ class db_subject:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
             self.sql = f"UPDATE {table} SET name=%s WHERE id={career.get_id()}"
-            self.data = (career.get_name())
+            self.data = (career.get_name(),)
             self.cursor.execute(self.sql, self.data)
             self.conn.commit()
         except Exception as err:
