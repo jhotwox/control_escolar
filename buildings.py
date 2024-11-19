@@ -82,12 +82,10 @@ class Buildings(Frame):
         self.bt_cancel.grid(row=0, column=2, padx=5, pady=10)
         self.bt_edit = Button(fr_button, text="Editar", border_width=1, width=60, command=self.edit_building)
         self.bt_edit.grid(row=0, column=3, padx=5, pady=10)
-        self.bt_remove = Button(fr_button, text="Eliminar", border_width=1, width=60, command=self.remove_building)
-        self.bt_remove.grid(row=0, column=4, padx=5, pady=10)
         self.bt_update = Button(fr_button, text="Actualizar", border_width=1, width=60, command=self.update_table)
-        self.bt_update.grid(row=0, column=5, padx=5, pady=10)
+        self.bt_update.grid(row=0, column=4, padx=5, pady=10)
         self.bt_return = Button(fr_button, text="Regresar", border_width=1, width=60, command=self._return)
-        self.bt_return.grid(row=0, column=6, padx=5, pady=10)
+        self.bt_return.grid(row=0, column=5, padx=5, pady=10)
 
         self.default()
         self.update_table()
@@ -114,9 +112,6 @@ class Buildings(Frame):
         self.table.selection_set(id)
         self.table.focus(id)
         self.table.see(id)
-    
-    def remove_building(self) -> None:
-        pass
 
     def new_building(self) -> None:
         self.tx_search.configure(state=DISABLED)
@@ -129,7 +124,6 @@ class Buildings(Frame):
         self.bt_save.configure(state=ENABLE)
         self.bt_cancel.configure(state=ENABLE)    
         self.bt_edit.configure(state=DISABLED)
-        self.bt_remove.configure(state=DISABLED)
         self.bt_update.configure(state=DISABLED)
         self.bt_return.configure(state=DISABLED)
 
@@ -208,7 +202,6 @@ class Buildings(Frame):
         self.bt_save.configure(state=DISABLED)
         self.bt_cancel.configure(state=DISABLED)
         self.bt_edit.configure(state=ENABLE)
-        self.bt_remove.configure(state=ENABLE)
         self.bt_update.configure(state=ENABLE)
         self.bt_return.configure(state=ENABLE)
 
@@ -217,7 +210,6 @@ class Buildings(Frame):
         self.bt_save.configure(state=ENABLE)
         self.bt_cancel.configure(state=ENABLE)
         self.bt_edit.configure(state=DISABLED)
-        self.bt_remove.configure(state=DISABLED)
 
         self.bt_search.configure(state=DISABLED)
         self.tx_search.configure(state=DISABLED)

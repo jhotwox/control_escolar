@@ -1,2 +1,2 @@
-__pychache__/ # Ignore Python cache files
+__pychache__/
 database.py

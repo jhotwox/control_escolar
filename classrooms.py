@@ -74,7 +74,7 @@ class Classrooms(Frame):
         self.table.column("#0", width=0, stretch=False)
         self.table.column("ID", anchor="center", width=30)
         self.table.column("Nombre", anchor="center", width=150)
-        self.table.column("Nombre_edificio", anchor="center", width=100)
+        self.table.column("Nombre_edificio", anchor="center", width=200)
        
         self.table.heading("#0", text="", anchor="center")
         self.table.heading("ID", text="ID", anchor="center")
