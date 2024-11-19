@@ -133,7 +133,7 @@ class Subjects(Frame):
         self.bt_update.configure(state=DISABLED)
         self.bt_return.configure(state=DISABLED)
 
-        self.clear_subject
+        self.clear_subject()
         self.tx_id.insert(0, db_subject.get_max_id(self)+1)
         self.tx_id.configure(state=DISABLED)
         self.band = True
@@ -259,4 +259,4 @@ class Subjects(Frame):
             
             # Comparar nombres de manera insensible a mayúsculas/minúsculas
             if item_values[1].strip().lower() == subject_name.lower():
-                raise Exception("La carrera ya existe.")
+                raise Exception("La materia ya existe.")

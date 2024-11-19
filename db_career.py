@@ -37,7 +37,7 @@ class db_carreer:
             self.cursor = self.conn.cursor()
             self.sql = f"UPDATE {table} SET name=%s WHERE id={career.get_id()}"
             self.data = (
-                career.get_name()
+                career.get_name(),
                 )
             self.cursor.execute(self.sql, self.data)
             self.conn.commit()
@@ -64,6 +64,27 @@ class db_carreer:
             if rows is None:
                 raise Exception("No se encontraron carreras")
             return [row[0] for row in rows] if len(rows) > 0 else [""]
+        except Exception as err:
+            print("[-] get_all_carrers: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error en la consulta")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
+    
+    # Esta función es para el crud de carreras, la anterior solo devuelve los nombres
+    def get_all_careers_for_career(self) -> list:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"SELECT * FROM {table}"
+            self.cursor.execute(self.sql)
+            rows = self.cursor.fetchall()
+            self.conn.commit()
+            if rows is None:
+                raise Exception("No se encontraron carreras")
+            return rows
         except Exception as err:
             print("[-] get_all_carrers: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")

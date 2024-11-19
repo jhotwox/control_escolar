@@ -38,7 +38,7 @@ San Lupercio, ten piedad de nosotros 🙏
 
 >TODO: Horarios ❌ (Edwin)
 
->TODO: Carreras ❌ (50%) (Joel)
+>TODO: Carreras ✅ (90%) (Joel) (Falta la función de eliminar carrera, pd. aca segun yo no lo pide)
 
 >TODO: Edificios ❌ (50%) (Joel)
 
