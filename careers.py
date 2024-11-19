@@ -240,7 +240,7 @@ class Careers(Frame):
 
     # region Validación
     def validate(self) -> None:
-         #Empty
+        #Empty
         entry_empty(self.tx_id, "ID")
         entry_empty(self.tx_name, "Nombre")
 
@@ -249,7 +249,7 @@ class Careers(Frame):
             raise Exception("El nombre de la carrera es demasiado largo")
         
         # Verificar duplicados en la tabla
-        subject_name = self.tx_name.get().strip()
+        career_name = self.tx_name.get().strip()
         for item in self.table.get_children():
             item_values = self.table.item(item, "values")
             
@@ -258,5 +258,5 @@ class Careers(Frame):
                 continue
             
             # Comparar nombres de manera insensible a mayúsculas/minúsculas
-            if item_values[1].strip().lower() == subject_name.lower():
+            if item_values[1].strip().lower() == career_name.lower():
                 raise Exception("La carrera ya existe.")

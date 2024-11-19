@@ -2,19 +2,19 @@ from customtkinter import END, CTkButton as Button, CTkEntry as Entry, CTkLabel 
 from tkinter import messagebox
 from tkinter.ttk import Treeview
 from functions import entry_empty, is_alphabetic, find_id, validate_email, INFO_TITLE, WARNING_TITLE, ERROR_TITLE
-from db_building import building_class
+from db_building import db_building
 from building import building as building_class
 from table_style import apply_style
 from constants import TYPE
-from user import user as teacher_class
 
 class Buildings(Frame):
     # region Interfaz
-    def __init__(self, container, controller, type: teacher_class, *args, **kwargs):
+    def __init__(self, container, controller, type: building_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
 
         self.controller = controller
         self.type = type
+        self.band = None
         
         self.TYPE_DICT = TYPE
 
@@ -69,7 +69,7 @@ class Buildings(Frame):
         self.table.column("#0", width=0, stretch=False)
         self.table.column("ID", anchor="center", width=30)
         self.table.column("Nombre", anchor="center", width=150)
-       
+        
         self.table.heading("#0", text="", anchor="center")
         self.table.heading("ID", text="ID", anchor="center")
         self.table.heading("Nombre", text="Nombre", anchor="center")
@@ -94,46 +94,169 @@ class Buildings(Frame):
 
     # region Funciones SQL
     def search_building(self) -> None:
-        pass
+        if not self.tx_search.get().isdecimal():
+            messagebox.showwarning(ERROR_TITLE, "Ingrese un ID valido")
+            return
+        
+        def search_id():
+            for item in self.table.get_children():
+                item_values = self.table.item(item, "values")
+                
+                if item_values[0] == self.tx_search.get():
+                    return item
+            return None
+        
+        id = search_id()
+        if id is None:
+            messagebox.showwarning(WARNING_TITLE, "No se encontro el edificio")
+            return
+        
+        self.table.selection_set(id)
+        self.table.focus(id)
+        self.table.see(id)
     
     def remove_building(self) -> None:
         pass
 
     def new_building(self) -> None:
-        pass
+        self.tx_search.configure(state=DISABLED)
+        self.bt_search.configure(state=DISABLED)
+
+        self.tx_id.configure(state=ENABLE)
+        self.tx_name.configure(state=ENABLE)
+
+        self.bt_new.configure(state=DISABLED)
+        self.bt_save.configure(state=ENABLE)
+        self.bt_cancel.configure(state=ENABLE)    
+        self.bt_edit.configure(state=DISABLED)
+        self.bt_remove.configure(state=DISABLED)
+        self.bt_update.configure(state=DISABLED)
+        self.bt_return.configure(state=DISABLED)
+
+        self.clear_building()
+        self.tx_id.insert(0, db_building.get_max_id(self)+1)
+        self.tx_id.configure(state=DISABLED)
+        self.band = True
+        return
 
     def save_building(self) -> None:
-        pass
+        try:
+            self.validate()  # Llamada a la validación general
+        except Exception as error:
+            messagebox.showwarning(WARNING_TITLE, error)
+            return
+        
+        try:
+            edificio = building_class(
+                int(self.tx_id.get()),
+                self.tx_name.get()
+            )
+
+            if self.band == True:
+                db_building.save(self, edificio)
+                messagebox.showinfo(INFO_TITLE, "Edificio guardado exitosamente!")
+            else:
+                db_building.edit(self, edificio)
+                messagebox.showinfo(INFO_TITLE, "Edificio editado exitosamente!")
+            self.default()
+            self.update_table()
+        except Exception as err:
+            print(f"[-] saveSubject: {err}")
+            messagebox.showerror(ERROR_TITLE, f"Error al {'guardar' if self.band else 'editar'} Edificio en BD")
+        finally:
+            self.band = None
 
     def get_building(self) -> None:
-        pass
+        selected = self.table.focus()
+        if selected is None or selected == "":
+            raise Exception("No se encontro el edificio")
+        
+        values = self.table.item(selected, "values")
+        self.enable_edit()
+        self.tx_id.insert(0, values[0])
+        self.tx_name.insert(0, values[1])
+        self.tx_id.configure(state=DISABLED)
 
     def edit_building(self) -> None:
-        pass
+        try:
+            self.get_building()
+        except Exception as err:
+            print("[-] ", err)
+            messagebox.showerror(ERROR_TITLE, err)
+            return
+        
+        self.band = False
 
     # region Funciones extras
     def _return(self) -> None:
         self.controller.show_frame("Menu")
 
-    def clear_edit_building(self):
-        pass
+    def clear_building(self):
+        self.tx_id.delete(0, END)
+        self.tx_name.delete(0, END)
 
     def default(self):
-        pass
+        self.tx_id.configure(state=ENABLE)
+        self.clear_building()
+        self.tx_search.configure(state=ENABLE)
+        self.bt_search.configure(state=ENABLE)
+
+        self.tx_id.configure(state=DISABLED)
+        self.tx_name.configure(state=DISABLED)
+
+        self.bt_new.configure(state=ENABLE)
+        self.bt_save.configure(state=DISABLED)
+        self.bt_cancel.configure(state=DISABLED)
+        self.bt_edit.configure(state=ENABLE)
+        self.bt_remove.configure(state=ENABLE)
+        self.bt_update.configure(state=ENABLE)
+        self.bt_return.configure(state=ENABLE)
 
     def enable_edit(self):
-        pass
+        self.bt_new.configure(state=DISABLED)
+        self.bt_save.configure(state=ENABLE)
+        self.bt_cancel.configure(state=ENABLE)
+        self.bt_edit.configure(state=DISABLED)
+        self.bt_remove.configure(state=DISABLED)
+
+        self.bt_search.configure(state=DISABLED)
+        self.tx_search.configure(state=DISABLED)
+        self.tx_id.configure(state=ENABLE)
+        self.tx_name.configure(state=ENABLE)
+        self.clear_building()
 
     #region Tabla
     def insert_table(self, data: list) -> None:
-        pass
+        for i, row in enumerate(data):
+            self.table.insert("", "end", iid=i, values=row)
 
     def clear_table(self) -> None:
-        pass
+        self.table.delete(*self.table.get_children())
 
     def update_table(self) -> None:
-        pass
+        self.clear_table()
+        edificios = db_building.get_all_building(self)
+        self.insert_table(edificios)
 
     # region Validación
     def validate(self) -> None:
-        pass
+        #Empty
+        entry_empty(self.tx_id, "ID")
+        entry_empty(self.tx_name, "Nombre")
+
+        #Size
+        if len(self.tx_name.get()) > 20:
+            raise Exception("El nombre del edificio es demasiado largo")
+        
+        # Verificar duplicados en la tabla
+        building_name = self.tx_name.get().strip()
+        for item in self.table.get_children():
+            item_values = self.table.item(item, "values")
+            
+            # Saltar el registro actual en caso de edición
+            if item_values[0] == self.tx_id.get():
+                continue
+            
+            # Comparar nombres de manera insensible a mayúsculas/minúsculas
+            if item_values[1].strip().lower() == building_name.lower():
+                raise Exception("El edificio ya existe.")

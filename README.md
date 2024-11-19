@@ -40,7 +40,7 @@ San Lupercio, ten piedad de nosotros 🙏
 
 >TODO: Carreras ✅ (90%) (Joel) (Falta la función de eliminar carrera, pd. aca segun yo no lo pide)
 
->TODO: Edificios ❌ (50%) (Joel)
+>TODO: Edificios ✅ (90%) (Joel) (Falta la función de eliminar Edificio)
 
 ### 19/11/24
 >TODO: Salones ❌ (50%) (Joel)
