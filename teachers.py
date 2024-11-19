@@ -232,7 +232,7 @@ class Teachers(Frame):
                 
                 # Guardar materias nuevas
                 subjects_list = self.get_subjects_from_tb()
-                subjects_dict = db_subject.get_subjects_dict(self)
+                subjects_dict = db_subject.get_subjects_in_subject_career_dict(self)
                 if subjects_dict is None or subjects_dict == {}:
                     raise Exception("No se encontraron materias")
                 for subject in subjects_list:

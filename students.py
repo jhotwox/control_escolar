@@ -208,7 +208,7 @@ class Students(Frame):
                 
                 # Guardar preregistros nuevos
                 subjects_list = self.get_subjects_from_tb()
-                subjects_dict = db_subject.get_subjects_dict(self, db_carreer.get_id_by_name(self, self.opm_career.get()))
+                subjects_dict = db_subject.get_subjects_in_subject_career_dict(self)
                 if subjects_dict is None or subjects_dict == {}:
                     raise Exception("No se encontraron materias en la carrera")
                 for subject in subjects_list:

@@ -28,21 +28,21 @@ San Lupercio, ten piedad de nosotros 🙏
 ### 12/11/24
 >TODO: Login ✅ (Cris)
 
->TODO: Usuarios ✅ (Cris) (Falta que al eliminar un maestro, se elimine de la tabla de maestros)
+>TODO: Usuarios ✅ (Cris)
 
->TODO: Alumnos ✅❌ (90%) (Cris)
+>TODO: Alumnos ✅ (Cris)
 
->TODO: Maestros ❌ (50%) (Cris)
+>TODO: Maestros ✅ (90%) (Cris) (Falta modificar la prioridad)
 
->TODO: Materias ✅ (90%) (Joel) (Falta la función de eliminar materia)
+>TODO: Materias ✅ (90%) (Joel) (Falta la función de eliminar materia) (Falta relacionar materias con carreras)
 
->TODO: Horarios ❌ (Edwin)
+>TODO: Horarios ❌ (50%) (Edwin)
 
 >TODO: Carreras ✅ (90%) (Joel) (Falta la función de eliminar carrera, pd. aca segun yo no lo pide)
 
 >TODO: Edificios ✅ (90%) (Joel) (Falta la función de eliminar Edificio)
 
-### 19/11/24
+### 26/11/24
 >TODO: Salones ❌ (50%) (Joel)
 
 >TODO: Registro ❌ (Cris)

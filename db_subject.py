@@ -138,6 +138,29 @@ class db_subject:
             self.cursor = self.conn.cursor()
             self.sql = f"""
                 SELECT s.id, s.name
+                FROM subject s
+            """
+            self.cursor.execute(self.sql)
+            rows = self.cursor.fetchall()
+            self.conn.commit()
+            if rows is None:
+                raise Exception("No se encontraron materias")
+            return {row[0]: row[1] for row in rows} if len(rows) > 0 else {}
+        except Exception as err:
+            print("[-] get_subjects_dict: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error en la consulta")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
+    
+    def get_subjects_in_subject_career_dict(self) -> dict:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"""
+                SELECT s.id, s.name
                 FROM subject_career sc, subject s
                 WHERE sc.subject_id = s.id
             """
@@ -148,7 +171,7 @@ class db_subject:
                 raise Exception("No se encontraron materias")
             return {row[0]: row[1] for row in rows} if len(rows) > 0 else {0: ""}
         except Exception as err:
-            print("[-] get_subjects_dict: ", err)
+            print("[-] get_subjects_dict_in_subject_career_dict: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
             if self.cursor:

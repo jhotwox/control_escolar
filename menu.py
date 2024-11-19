@@ -41,8 +41,14 @@ class Menu(Frame):
         self.bt_registrations = Button(self, text="Planeación", command=self.open_registrations)
         self.bt_registrations.grid(row=5, column=1, padx=10, pady=10)
         
+        self.bt_subjects_careers = Button(self, text="Asignar materias", command=self.open_subjects_careers)
+        self.bt_subjects_careers.grid(row=6, column=0, padx=10, pady=10)
+        
+        self.bt_priority = Button(self, text="Prioridad", command=self.open_priority)
+        self.bt_priority.grid(row=6, column=1, padx=10, pady=10)
+        
         self.bt_exit = Button(self, text="Salir", command=self.exit)
-        self.bt_exit.grid(row=6, column=0, pady=10, padx=35, columnspan=2, sticky="ew")
+        self.bt_exit.grid(row=7, column=0, pady=10, padx=35, columnspan=2, sticky="ew")
         
         # Desavilitar botones por tipo de usuario
         if profile.get_type() == TYPE[1]:
@@ -91,6 +97,13 @@ class Menu(Frame):
     def open_registrations(self) -> None:
         return
         # self.controller.show_frame("Registrations")
+    
+    def open_subjects_careers(self) -> None:
+        self.controller.show_frame("Subjects_Careers")
+    
+    def open_priority(self) -> None:
+        return
+        # self.controller.show_frame("Priority")
     
     def exit(self) -> None:
         # if hasattr(self.controller, "show_frame"):
