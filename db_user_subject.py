@@ -37,6 +37,22 @@ class db_user_subject:
             if self.conn:
                 self.conn.close()
     
+    def edit(self, user_id: int, subject_id: int, priority: int) -> None:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"UPDATE {table} SET priority={priority} WHERE user_id={user_id} AND subject_id={subject_id}"
+            self.cursor.execute(self.sql)
+            self.conn.commit()
+        except Exception as err:
+            print(f"[-] edit in db_user_subject: {err}")
+            raise Exception(f"Error al editar usuario-materia: {err}")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
+    
     def remove(self, user_id: int, subject_id: int) -> None:
         try:
             self.conn = db.conection().open()
@@ -134,6 +150,48 @@ class db_user_subject:
             return rows
         except Exception as err:
             print("[-] get_carreer_by_user: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error en la consulta")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
+
+    def get_teachers_by_subject(self, subject_id: int) -> dict:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"""
+                SELECT s.name materia, u.name maestro, us.priority
+                FROM user_subject us, user u, subject s
+                WHERE u.id=us.user_id
+                AND us.subject_id=s.id
+                AND us.subject_id={subject_id}
+            """
+            self.cursor.execute(self.sql)
+            rows = self.cursor.fetchall()
+            self.conn.commit()
+            return rows if rows is not None else ()
+        except Exception as err:
+            print("[-] get_teachers_by_subject: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error en la consulta")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
+    
+    def get_prioritys_by_subject(self, subject_id: int) -> dict:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"SELECT user_id, priority FROM {table} WHERE subject_id={subject_id}"
+            self.cursor.execute(self.sql)
+            rows = self.cursor.fetchall()
+            self.conn.commit()
+            return {int(row[0]): int(row[1]) for row in rows} if rows is not None else {}
+        except Exception as err:
+            print("[-] get_priority_by_subject: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
             if self.cursor:

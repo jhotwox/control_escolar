@@ -102,8 +102,7 @@ class Menu(Frame):
         self.controller.show_frame("Subjects_Careers")
     
     def open_priority(self) -> None:
-        return
-        # self.controller.show_frame("Priority")
+        self.controller.show_frame("Priority")
     
     def exit(self) -> None:
         # if hasattr(self.controller, "show_frame"):

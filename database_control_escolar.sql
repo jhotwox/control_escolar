@@ -210,3 +210,14 @@ FOREIGN KEY (group_id) REFERENCES groups(id)
 ON DELETE CASCADE;
 
 -- #region PRUEBAS
+SELECT s.name materia, u.name maestro, us.priority
+FROM user_subject us, user u, subject s
+WHERE u.id=us.user_id
+AND us.subject_id=s.id
+AND us.subject_id=5;
+
+SELECT s.name materia, u.name maestro, us.priority
+FROM user_subject us, user u, subject s
+WHERE u.id=us.user_id
+AND us.subject_id=s.id
+AND us.subject_id={subject_id};

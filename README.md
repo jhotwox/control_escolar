@@ -32,9 +32,9 @@ San Lupercio, ten piedad de nosotros 🙏
 
 >TODO: Alumnos ✅ (Cris)
 
->TODO: Maestros ✅ (90%) (Cris) (Falta modificar la prioridad)
+>TODO: Maestros ✅ (Cris)
 
->TODO: Materias ✅ (90%) (Joel) (Falta la función de eliminar materia) (Falta relacionar materias con carreras)
+>TODO: Materias ✅ (90%) (Joel) (Falta la función de eliminar materia)
 
 >TODO: Horarios ❌ (50%) (Edwin)
 

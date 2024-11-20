@@ -87,6 +87,29 @@ class db_teacher:
                 self.cursor.close()
             if self.conn:
                 self.conn.close()
+    
+    # Puede que se necesite que solo se obtengan los maestros que esten en la tabla teacher
+    def get_teachers_dict(self) -> dict:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = """
+                SELECT id, name
+                FROM user
+                WHERE type='maestro';
+            """
+            self.cursor.execute(self.sql)
+            rows = self.cursor.fetchall()
+            self.conn.commit()
+            return {row[0]: row[1] for row in rows} if rows is not None else {}
+        except Exception as err:
+            print("[-] get_teachers_dict: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error en la consulta")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
             
     def get_teacher_by_id(self, id: int) -> list:
         try:
