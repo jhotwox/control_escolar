@@ -48,8 +48,7 @@ class Classrooms(Frame):
         self.lb_building = Label(fr_entry, text="Edificio")
         self.lb_building.grid(row=2, column=0, pady=0, sticky="w")
 
-        # Inicializar el menú desplegable con los valores actualizados
-        self.update_building_options()  # Llama a la función que actualiza la lista de edificios
+        self.updated_buildings = [str(id) for id in db_building.get_all_building_id(self)]
         self.selected_type = StringVar(value="----")  # Valor por defecto
         self.opm_type = OptMenu(fr_entry, values=self.updated_buildings, variable=self.selected_type)
         self.opm_type.grid(row=2, column=1, pady=5)
@@ -96,7 +95,7 @@ class Classrooms(Frame):
         self.bt_edit.grid(row=0, column=3, padx=5, pady=10)
         self.bt_remove = Button(fr_button, text="Eliminar", border_width=1, width=60, command=self.remove_classroom)
         self.bt_remove.grid(row=0, column=4, padx=5, pady=10)
-        self.bt_update = Button(fr_button, text="Actualizar", border_width=1, width=60, command=self.update_table)
+        self.bt_update = Button(fr_button, text="Actualizar", border_width=1, width=60, command=self.update_building_options)
         self.bt_update.grid(row=0, column=5, padx=5, pady=10)
         self.bt_return = Button(fr_button, text="Regresar", border_width=1, width=60, command=self._return)
         self.bt_return.grid(row=0, column=6, padx=5, pady=10)
@@ -108,6 +107,9 @@ class Classrooms(Frame):
     def update_building_options(self):
     # Obtener los IDs de edificios actualizados desde la base de datos
         self.updated_buildings = [str(id) for id in db_building.get_all_building_id(self)]
+
+        # Actualizar el contenido del OptionMenu
+        self.opm_type.configure(values=self.updated_buildings)
 
     def search_classroom(self) -> None:
         if not self.tx_search.get().isdecimal():
@@ -147,6 +149,7 @@ class Classrooms(Frame):
         self.bt_cancel.configure(state=ENABLE)    
         self.bt_edit.configure(state=DISABLED)
         self.bt_update.configure(state=DISABLED)
+        self.bt_remove.configure(state=DISABLED)
         self.bt_return.configure(state=DISABLED)
 
         self.clear_classroom()
@@ -259,16 +262,18 @@ class Classrooms(Frame):
 
     # region Validación
     def validate(self) -> None:
-        #Empty
+        # Validar campos vacíos
         entry_empty(self.tx_id, "ID")
         entry_empty(self.tx_name, "Nombre")
 
-        #Size
+        # Verificar longitud del nombre
         if len(self.tx_name.get()) > 20:
-            raise Exception("El nombre de la salon es demasiado largo")
-        
-        # Verificar duplicados en la tabla
+            raise Exception("El nombre del salón es demasiado largo")
+
+        # Verificar duplicados en el mismo edificio
         classroom_name = self.tx_name.get().strip()
+        building_id = self.opm_type.get()
+
         for item in self.table.get_children():
             item_values = self.table.item(item, "values")
             
@@ -276,6 +281,9 @@ class Classrooms(Frame):
             if item_values[0] == self.tx_id.get():
                 continue
             
-            # Comparar nombres de manera insensible a mayúsculas/minúsculas
-            if item_values[1].strip().lower() == classroom_name.lower():
-                raise Exception("El salon ya existe.")
+            # Comparar nombre y edificio
+            if (
+                item_values[1].strip().lower() == classroom_name.lower() and
+                item_values[2] == building_id
+            ):
+                raise Exception("Ya existe un salón con este nombre en el edificio seleccionado.")
