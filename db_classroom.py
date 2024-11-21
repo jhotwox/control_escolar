@@ -70,5 +70,19 @@ class db_classroom:
                 self.cursor.close()
             if self.conn:
                 self.conn.close()
-        
-        
+    
+    def remove(self, classroom: classroom_class) -> None:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"DELETE FROM {table} WHERE id={classroom.get_id()}"
+            self.cursor.execute(self.sql)
+            self.conn.commit()
+        except Exception as err:
+            print(f"[-] remove in db_classroom: {err}")
+            raise Exception(f"Error al eliminar salon: {err}")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()

@@ -134,7 +134,21 @@ class Classrooms(Frame):
         self.table.see(id)
     
     def remove_classroom(self) -> None:
-        pass
+        try:
+            selected = self.table.focus()
+            if selected is None or selected == "":
+                messagebox.showwarning(WARNING_TITLE, "No se selecciono un usuario")
+                return
+            
+            values = self.table.item(selected, "values")
+            aux = classroom_class(id=int(values[0]))
+            db_classroom.remove(self, aux)
+            messagebox.showinfo(INFO_TITLE, "Salon eliminado")
+            self.update_table()
+            self.default()
+        except Exception as err:
+            print("[-] remove_user", err)
+            messagebox.showerror(ERROR_TITLE, "No se logro eliminar el salon")
 
     def new_classroom(self) -> None:
         self.tx_search.configure(state=DISABLED)

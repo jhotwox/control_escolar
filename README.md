@@ -43,7 +43,7 @@ San Lupercio, ten piedad de nosotros 🙏
 >TODO: Edificios ✅ (100%) (Joel) 
 
 ### 26/11/24
->TODO: Salones ✅ (90%) (Joel) (Falta la función de eliminar salones)
+>TODO: Salones ✅ (100%) (Joel)
 
 >TODO: Registro ❌ (Cris)
 
