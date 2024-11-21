@@ -74,7 +74,7 @@ class db_building:
             try:
                 self.conn = db.conection().open()
                 self.cursor = self.conn.cursor()
-                self.sql = f"SELECT id FROM {table}"
+                self.sql = f"SELECT name FROM {table}"
                 self.cursor.execute(self.sql)
                 rows = self.cursor.fetchall()
                 self.conn.commit()
@@ -89,3 +89,30 @@ class db_building:
                     self.cursor.close()
                 if self.conn:
                     self.conn.close()
+
+    def get_building_by_name(self, name: str) -> int:
+        try:
+            # Establecer la conexión
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+
+            # Consulta parametrizada para prevenir inyección SQL
+            self.sql = f"SELECT id FROM {table} WHERE name = %s"
+            self.cursor.execute(self.sql, (name,))
+
+            # Obtener el resultado
+            row = self.cursor.fetchone()
+            if row is None:
+                raise Exception(f"No se encontró el edificio con el nombre '{name}'")
+
+            # Convertir y retornar el ID como entero
+            return int(row[0])
+        except Exception as err:
+            print("[-] get_building_by_name: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error en la consulta")
+        finally:
+            # Cerrar los recursos de manera segura
+            if hasattr(self, 'cursor') and self.cursor:
+                self.cursor.close()
+            if hasattr(self, 'conn') and self.conn:
+                self.conn.close()

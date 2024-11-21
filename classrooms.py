@@ -169,7 +169,7 @@ class Classrooms(Frame):
             salones = classroom_class(
                 int(self.tx_id.get()),
                 self.tx_name.get(),
-                int(self.opm_type.get())
+                db_building.get_building_by_name(self, self.opm_type.get())
             )
 
             if self.band == True:
