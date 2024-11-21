@@ -5,7 +5,7 @@ from horario import Horario as horario_class
 from db_functions import max_id
 from functions import ERROR_TITLE, WARNING_TITLE
 
-table = "horarios"
+table = "schedule"
 
 class db_horarios:    
     def save(self, schedule: horario_class) -> None:
@@ -37,12 +37,9 @@ class db_horarios:
             self.cursor = self.conn.cursor()
             self.sql = f"UPDATE {table} SET day=%s, start_time=%s, end_time=%s, WHERE id={shedule.get_id()}"
             self.data = (
-                shedule.get_name(),
-                shedule.get_p_surname(),
-                shedule.get_m_surname(),
-                shedule.get_email(),
-                shedule.get_type(),
-                shedule.get_password()
+                shedule.get_day(),
+                shedule.get_start_time(),
+                shedule.get_end_time()
             )
             self.cursor.execute(self.sql, self.data)
             self.conn.commit()
