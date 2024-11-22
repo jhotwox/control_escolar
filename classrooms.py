@@ -137,7 +137,7 @@ class Classrooms(Frame):
         try:
             selected = self.table.focus()
             if selected is None or selected == "":
-                messagebox.showwarning(WARNING_TITLE, "No se selecciono un usuario")
+                messagebox.showwarning(WARNING_TITLE, "No se selecciono un salon")
                 return
             
             values = self.table.item(selected, "values")
@@ -147,7 +147,7 @@ class Classrooms(Frame):
             self.update_table()
             self.default()
         except Exception as err:
-            print("[-] remove_user", err)
+            print("[-] remove_salon", err)
             messagebox.showerror(ERROR_TITLE, "No se logro eliminar el salon")
 
     def new_classroom(self) -> None:
