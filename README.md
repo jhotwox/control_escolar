@@ -36,7 +36,7 @@ San Lupercio, ten piedad de nosotros 🙏
 
 >TODO: Materias ❌ (Joel)
 
->TODO: Horarios ❌ (Edwin)
+>TODO: Horarios ✅❌ (%50) "no pude hacer que el boton funcione" (Edwin)
 
 >TODO: Carreras ❌ (Joel)
 

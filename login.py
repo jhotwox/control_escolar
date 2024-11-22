@@ -5,6 +5,8 @@ from db_user import db_user
 from user import user as user_class
 from menu import Menu
 from users import Users
+from horario import Horario
+from db_horarios import db_horarios
 from students import Students
 from constants import TYPE
 

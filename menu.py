@@ -1,5 +1,6 @@
 from customtkinter import CTkButton as Button, CTkFrame as Frame, CTkLabel as Label
 from user import user as user_class
+from horario import Horario as horario_class
 from constants import TYPE
 
 class Menu(Frame):
@@ -76,8 +77,7 @@ class Menu(Frame):
         # self.controller.show_frame("Subjects")
 
     def open_schedules(self) -> None:
-        return
-        # self.controller.show_frame("Schedules")
+        self.controller.show_frame("Horario")
         
     def open_careers(self) -> None:
         return

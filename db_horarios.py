@@ -63,7 +63,7 @@ class db_horarios:
             self.conn.close()
         
     def get_max_id(self) -> int:
-        return max_id(table)
+        return max_id("schedule")
     
     def get_all_horarios(self) -> list:
         try:
@@ -91,7 +91,7 @@ class db_horarios:
             row = self.cursor.fetchone()
             self.conn.commit()
             if row is None:
-                raise Exception("No se encontro el usuario")
+                raise Exception("No se encontro el Horario")
             return horario_class(int(row[0]), row[1], row[2], row[3])
         except Exception as err:
             print("[-] get_horario_by_id: ", err)
