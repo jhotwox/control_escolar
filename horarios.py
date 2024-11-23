@@ -7,14 +7,18 @@ from horario import Horario as horario_class
 from table_style import apply_style
 from db_functions import email_available
 from constants import TYPE
+from user import user as teacher_class
 
 #region Interfaz
 class Horario(Frame):
-    def __init__(self, container, controller):
-        super().__init__(container)
+    # region Interfaz
+    def __init__(self, container, controller, type: teacher_class, *args, **kwargs):
+        super().__init__(container, *args, **kwargs)
+        
         self.controller = controller
-
-        # Frames para organización
+        self.band = False
+        self.type = type
+        
         fr_search = Frame(self)
         fr_search.grid(row=0, column=0, sticky="nsw", padx=10, pady=10)
         fr_entry = Frame(self)
@@ -132,49 +136,23 @@ class Horario(Frame):
         self.tx_id.configure(state=DISABLED)
         self.band = True
         return
-    
-    def save_horario(self):
-        try:
-            self.validate()
-        except Exception as error:
-            messagebox.showwarning(WARNING_TITLE, error)
-            return
-        try:
-            user = horario_class(
-                int(self.tx_id.get()),
-                self.tx_id.get(),
-                self.tx_dia.get(),
-                self.tx_hora_inicio.get(),
-                self.tx_hora_fin.get(),
-            )
-            if self.band == True:
-                db_horarios.save(self, user)
-                messagebox.showinfo(INFO_TITLE, "Horario guardado exitosamente!")
-            else:
-                db_horarios.edit(self, user)
-                messagebox.showinfo(INFO_TITLE, "Horario editado exitosamente!")
-            self.default()
-            self.update_table()
-        except Exception as err:
-            print(f"[-] saveHorario: {err}")
-            messagebox.showerror(ERROR_TITLE, f"Error al {'guardar' if self.band else 'editar'} Horario en BD")
-        finally:
-            self.band = None
-    
-    def get_horario(self) -> None:
-        selected = self.table.focus()
-        if selected is None or selected == "":
-            raise Exception("No se encontro el horario")
-        
-        values = self.table.item(selected, "values")
-        self.enable_edit()
-        self.tx_id.insert(0, values[0])
-        self.tx_id.configure(state=DISABLED)
-        self.tx_dia.insert(0, values[1])
-        self.tx_hora_inicio.insert(0, values[2])
-        self.tx_hora_fin.insert(0, values[3])
-    
-    def search_horario(self):
+
+    def remove_horario(self):
+        print("Eliminar horario")
+        return
+
+    def update_table(self):
+        return
+
+    def _return(self):
+        self.controller.show_frame("Menu")
+
+    def default(self):
+        self.tx_id.delete(0, END)
+        self.tx_Turno.delete(0, END)
+        self.tx_Hora.delete(0, END)
+
+    def search_user(self) -> None:
         if not self.tx_search.get().isdecimal():
             messagebox.showwarning(ERROR_TITLE, "Ingrese un ID válido")
             return

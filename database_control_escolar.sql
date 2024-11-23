@@ -126,3 +126,98 @@ BEGIN
     SET quota = quota + 1
     WHERE id = OLD.group_id;
 END
+
+-- #region UPDATE DELETE CASCADE
+-- Eliminar restricciones actuales antes de volver a crearlas con eliminación en cascada
+ALTER TABLE student DROP FOREIGN KEY student_ibfk_1;
+ALTER TABLE teacher DROP FOREIGN KEY teacher_ibfk_1;
+ALTER TABLE classroom DROP FOREIGN KEY classroom_ibfk_1;
+ALTER TABLE subject_career DROP FOREIGN KEY subject_career_ibfk_1, DROP FOREIGN KEY subject_career_ibfk_2;
+ALTER TABLE user_career DROP FOREIGN KEY user_career_ibfk_1, DROP FOREIGN KEY user_career_ibfk_2;
+ALTER TABLE user_subject DROP FOREIGN KEY user_subject_ibfk_1, DROP FOREIGN KEY user_subject_ibfk_2;
+ALTER TABLE groups DROP FOREIGN KEY groups_ibfk_1, DROP FOREIGN KEY groups_ibfk_2, DROP FOREIGN KEY groups_ibfk_3, DROP FOREIGN KEY groups_ibfk_4;
+ALTER TABLE pre_registration DROP FOREIGN KEY pre_registration_ibfk_1, DROP FOREIGN KEY pre_registration_ibfk_2;
+ALTER TABLE registration DROP FOREIGN KEY registration_ibfk_1, DROP FOREIGN KEY registration_ibfk_2;
+
+-- Crear nuevamente las claves foráneas con eliminación en cascada
+ALTER TABLE student
+ADD CONSTRAINT fk_student_user
+FOREIGN KEY (id) REFERENCES user(id)
+ON DELETE CASCADE;
+
+ALTER TABLE teacher
+ADD CONSTRAINT fk_teacher_user
+FOREIGN KEY (id) REFERENCES user(id)
+ON DELETE CASCADE;
+
+ALTER TABLE classroom
+ADD CONSTRAINT fk_classroom_building
+FOREIGN KEY (building_id) REFERENCES building(id)
+ON DELETE CASCADE;
+
+ALTER TABLE subject_career
+ADD CONSTRAINT fk_subject_career_subject
+FOREIGN KEY (subject_id) REFERENCES subject(id)
+ON DELETE CASCADE,
+ADD CONSTRAINT fk_subject_career_career
+FOREIGN KEY (career_id) REFERENCES career(id)
+ON DELETE CASCADE;
+
+ALTER TABLE user_career
+ADD CONSTRAINT fk_user_career_user
+FOREIGN KEY (user_id) REFERENCES user(id)
+ON DELETE CASCADE,
+ADD CONSTRAINT fk_user_career_career
+FOREIGN KEY (career_id) REFERENCES career(id)
+ON DELETE CASCADE;
+
+ALTER TABLE user_subject
+ADD CONSTRAINT fk_user_subject_user
+FOREIGN KEY (user_id) REFERENCES user(id)
+ON DELETE CASCADE,
+ADD CONSTRAINT fk_user_subject_subject
+FOREIGN KEY (subject_id) REFERENCES subject(id)
+ON DELETE CASCADE;
+
+ALTER TABLE groups
+ADD CONSTRAINT fk_groups_schedule
+FOREIGN KEY (schedule_id) REFERENCES schedule(id)
+ON DELETE CASCADE,
+ADD CONSTRAINT fk_groups_teacher
+FOREIGN KEY (teacher_id) REFERENCES teacher(id)
+ON DELETE CASCADE,
+ADD CONSTRAINT fk_groups_classroom
+FOREIGN KEY (classroom_id) REFERENCES classroom(id)
+ON DELETE CASCADE,
+ADD CONSTRAINT fk_groups_subject
+FOREIGN KEY (subject_id) REFERENCES subject(id)
+ON DELETE CASCADE;
+
+ALTER TABLE pre_registration
+ADD CONSTRAINT fk_pre_registration_user
+FOREIGN KEY (user_id) REFERENCES user(id)
+ON DELETE CASCADE,
+ADD CONSTRAINT fk_pre_registration_subject
+FOREIGN KEY (subject_id) REFERENCES subject(id)
+ON DELETE CASCADE;
+
+ALTER TABLE registration
+ADD CONSTRAINT fk_registration_user
+FOREIGN KEY (user_id) REFERENCES user(id)
+ON DELETE CASCADE,
+ADD CONSTRAINT fk_registration_group
+FOREIGN KEY (group_id) REFERENCES groups(id)
+ON DELETE CASCADE;
+
+-- #region PRUEBAS
+SELECT s.name materia, u.name maestro, us.priority
+FROM user_subject us, user u, subject s
+WHERE u.id=us.user_id
+AND us.subject_id=s.id
+AND us.subject_id=5;
+
+SELECT s.name materia, u.name maestro, us.priority
+FROM user_subject us, user u, subject s
+WHERE u.id=us.user_id
+AND us.subject_id=s.id
+AND us.subject_id={subject_id};

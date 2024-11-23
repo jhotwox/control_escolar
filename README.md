@@ -30,20 +30,20 @@ San Lupercio, ten piedad de nosotros 🙏
 
 >TODO: Usuarios ✅ (Cris)
 
->TODO: Alumnos ❌ (Cris)
+>TODO: Alumnos ✅ (Cris)
 
->TODO: Maestros ❌ (Cris)
+>TODO: Maestros ✅ (Cris)
 
->TODO: Materias ❌ (Joel)
+>TODO: Materias ✅ (100%) (Joel)
 
->TODO: Horarios ✅❌ (%50) "no pude hacer que el boton funcione" (Edwin)
+>TODO: Horarios ❌ (50%) (Edwin)
 
->TODO: Carreras ❌ (Joel)
+>TODO: Carreras ✅ (100%) (Joel)
 
->TODO: Edificios ❌ (Joel)
+>TODO: Edificios ✅ (100%) (Joel) 
 
-### 19/11/24
->TODO: Salones ❌ (Joel)
+### 26/11/24
+>TODO: Salones ✅ (100%) (Joel)
 
 >TODO: Registro ❌ (Cris)
 

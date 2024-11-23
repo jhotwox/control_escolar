@@ -37,7 +37,10 @@ def is_available(value: str, table: str, column: str) -> bool | None:
     except Exception as err:
         print(f"[-] is_available: {err}")
     finally:
-        conn.close()
+        if conn:
+            conn.close()
+        if cursor:
+            cursor.close()
 # print(is_available("nath", "user", "name"))
 
 
@@ -64,27 +67,6 @@ def email_available(value: str, table: str) -> bool | None:
     """
     return is_available(value, table, "email")
 # print(email_available("crist", "user"))
-
-
-def available_customers(user_id: int) -> dict:
-    """Return a dictionary with the id and name of customers registered by the user
-    
-    :Example:
-    >>> available_customers(1)
-        {1: 'Gerson', 2: 'Karen', ...}
-
-    Args:
-        user_id (int): ID from the user
-        
-    Returns:
-        dict: dictionary if table customer with columns name and id exist
-    """
-    
-    name = get_column_with_user('customer', 'name', user_id)
-    id = get_column_with_user('customer', 'id', user_id)
-    return dict(zip(id, name))
-# print(available_customers(1))
-
 
 #region get column
 def get_column_order_id(table: str, column: str) -> list | None:
@@ -123,40 +105,11 @@ def get_column_order_id(table: str, column: str) -> list | None:
     except Exception as err:
         print(f"[-] get_column: {err}")
     finally:
-        conn.close()
+        if conn:
+            conn.close()
+        if cursor:
+            cursor.close()
         
-def get_unitary_price_by_id(product_id: int = 0) -> float | None:
-    try:
-        conn = db.conection().open()
-        cursor = conn.cursor()
-        sql = f"SELECT purchase_price FROM product WHERE id = {product_id}"
-        cursor.execute(sql)
-        row = cursor.fetchone()
-        conn.commit()
-        if row is None:
-            raise Exception(f"Product '{product_id}' doesn't exist")
-        return row[0]
-    except mysql.connector.Error as err:
-        print(f"[-] get_unitary_price_by_id SQL: {err}")
-    except Exception as err:
-        print(f"[-] get_unitary_price_by_id: {err}")
-
-def get_supplier_by_purchase_id(purchase_id: int) -> int | None:
-    try:
-        conn = db.conection().open()
-        cursor = conn.cursor()
-        sql = f"SELECT product.supplier FROM product, detail_purchase WHERE product.id = detail_purchase.product_id AND detail_purchase.purchase_id = {purchase_id}"
-        cursor.execute(sql)
-        row = cursor.fetchone()
-        conn.commit()
-        if row is None:
-            raise Exception(f"Purchase '{purchase_id}' doesn't exist")
-        return row[0]
-    except mysql.connector.Error as err:
-        print(f"[-] get_supplier_by_purchase_id SQL: {err}")
-    except Exception as err:
-        print(f"[-] get_supplier_by_purchase_id: {err}")
- 
 def get_column_with_user(table: str, column: str, user_id: int) -> list | None:
     """Return a column in form of list where the query contain the user_id and it's ordered by id
     
@@ -193,7 +146,10 @@ def get_column_with_user(table: str, column: str, user_id: int) -> list | None:
     except Exception as err:
         print(f"[-] get_column: {err}")
     finally:
-        conn.close()
+        if conn:
+            conn.close()
+        if cursor:
+            cursor.close()
 # print(get_column_with_user('customer', "name", 1))
 
 
@@ -235,48 +191,11 @@ def get_columns(table: str, columns: str) -> list | None:
     except Exception as err:
         print(f"[-] get_columns: {err}")
     finally:
-        conn.close()
+        if conn:
+            conn.close()
+        if cursor:
+            cursor.close()
 # print(get_columns('users', 'id, name'))
-
-
-def get_column_with_stock(table: str, column: str) -> list | None:
-    """Return the result of a query order by id and stock > 0
-    
-    :Example:
-    >>> get_column_with_stock('part', "id")
-        [1, 2, ...]
-    >>> get_column_with_stock('unknown', "description")
-        None and Exception
-        
-    Args:
-        table (str): Table to search 
-        column (str): Column to search
-
-    Raises:
-        Exception: Column it's empty
-        Exception: Table {db.table} doesn't exist
-
-    Returns:
-        list | None: Result of the column
-    """
-    try:
-        conn = db.conection().open()
-        cursor = conn.cursor()
-        sql = f"SELECT {column} FROM {table} WHERE stock > 0 ORDER BY id"
-        cursor.execute(sql)
-        rows = cursor.fetchall()
-        conn.commit()
-        rows = [item[0] for item in rows]
-        if rows is None:
-            raise Exception(f"Column '{column}' it's empty")
-        return rows
-    except mysql.connector.Error as err:
-        print(f"[-] get_column SQL: {err}")
-    except Exception as err:
-        print(f"[-] get_column: {err}")
-    finally:
-        conn.close()
-# print(get_column_with_stock('part', "id"))
 
 
 #region search
@@ -315,7 +234,10 @@ def id_by_name(table: str, name: str) -> int | None:
     except Exception as err:
         print(f"[-] id_by_name: {err}")
     finally:
-        conn.close()
+        if conn:
+            conn.close()
+        if cursor:
+            cursor.close()
 # print(id_by_name("customers", "cris"))
 
 
@@ -354,7 +276,10 @@ def name_by_id(table: str, id: int) -> str | None:
     except Exception as err:
         print(f"[-] name_by_id: {err}")
     finally:
-        conn.close()
+        if conn:
+            conn.close()
+        if cursor:
+            cursor.close()
 # print(name_by_id("user", "4"))
 
 

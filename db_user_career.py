@@ -1,24 +1,19 @@
 from tkinter import messagebox
 import mysql.connector as mysql
 import database as db
-from horario import Horario as horario_class
-from db_functions import max_id
-from functions import ERROR_TITLE, WARNING_TITLE
+from functions import ERROR_TITLE
 
-table = "schedule"
+table = "user_career"
 
-class db_horarios:    
-    def save(self, schedule: horario_class) -> None:
+class db_user_career:
+    def save(self, user_id: int, career_id: int) -> None:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"INSERT INTO {table}(id, day, start_time, end_time) values (%s,%s,%s,%s)"
+            self.sql = f"INSERT INTO {table}(user_id, career_id) values (%s,%s)"
             self.data = (
-                schedule.get_id(),
-                schedule.get_day(),
-                schedule.get_start_time(),
-                schedule.get_end_time(),
-                schedule.get_type()
+                user_id,
+                career_id
             )
             self.cursor.execute(self.sql, self.data)
             self.conn.commit()
@@ -26,55 +21,47 @@ class db_horarios:
             print(f"[-] Mysql: {err}")
             raise Exception(f"Error en la BD: {err}")
         except Exception as err:
-            print(f"[-] save in db_horarios: {err}")
-            raise Exception(f"Error al guardar horarios: {err}")
+            print(f"[-] save in db_user_career: {err}")
+            raise Exception(f"Error al guardar usuario-carrera: {err}")
         finally:
             if self.cursor:
                 self.cursor.close()
             if self.conn:
                 self.conn.close()
     
-    def edit(self, shedule: horario_class) -> None:
+    def remove(self, user_id: int, career_id: int) -> None:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"UPDATE {table} SET day=%s, start_time=%s, end_time=%s, WHERE id={shedule.get_id()}"
-            self.data = (
-                shedule.get_day(),
-                shedule.get_start_time(),
-                shedule.get_end_time()
-            )
-            self.cursor.execute(self.sql, self.data)
-            self.conn.commit()
-        except Exception as err:
-            print(f"[-] edit in db_horarios: {err}")
-            raise Exception(f"Error al editar horarios: {err}")
-        finally:
-            if self.cursor:
-                self.cursor.close()
-            if self.conn:
-                self.conn.close()
-        
-    def remove(self, shedule: horario_class) -> None:
-        try:
-            self.conn = db.conection().open()
-            self.cursor = self.conn.cursor()
-            self.sql = f"DELETE FROM {table} WHERE id={shedule.get_id()}"
+            self.sql = f"DELETE FROM {table} WHERE user_id={user_id} AND career_id={career_id}"
             self.cursor.execute(self.sql)
             self.conn.commit()
         except Exception as err:
-            print(f"[-] remove in db_horarios: {err}")
-            raise Exception(f"Error al eliminar usuario: {err}")
+            print(f"[-] remove in db_user_career: {err}")
+            raise Exception(f"Error al eliminar usuario-carrera: {err}")
         finally:
             if self.cursor:
                 self.cursor.close()
             if self.conn:
                 self.conn.close()
-        
-    def get_max_id(self) -> int:
-        return max_id("schedule")
+
+    def remove_by_user(self, user_id: int) -> None:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"DELETE FROM {table} WHERE user_id={user_id}"
+            self.cursor.execute(self.sql)
+            self.conn.commit()
+        except Exception as err:
+            print(f"[-] remove_by_user in db_user_career: {err}")
+            raise Exception(f"Error al eliminar usuario-carrera: {err}")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
-    def get_all_horarios(self) -> list:
+    def get_all_user_carreer(self) -> list:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
@@ -83,36 +70,39 @@ class db_horarios:
             rows = self.cursor.fetchall()
             self.conn.commit()
             if rows is None:
-                raise Exception("No se encontraron horarios")
+                raise Exception("No se encontraron registros en usuario-carrera")
             return rows
         except Exception as err:
-            print("[-] get_all_horarios: ", err)
+            print("[-] get_all_user_career: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
             if self.cursor:
                 self.cursor.close()
             if self.conn:
                 self.conn.close()
-            
-    def get_horario_by_id(self, id: int) -> horario_class:
+    
+    def get_carreer_by_user(self, user_id: int) -> list:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"SELECT * FROM {table} WHERE id={id}"
+            self.sql = f"""
+                SELECT c.name
+                FROM {table} uc, career c
+                WHERE uc.career_id = c.id
+                AND user_id={user_id}
+                """
             self.cursor.execute(self.sql)
-            row = self.cursor.fetchone()
+            rows = self.cursor.fetchone()
             self.conn.commit()
-            if row is None:
-                raise Exception("No se encontro el Horario")
-            return horario_class(int(row[0]), row[1], row[2], row[3])
+            return rows[0] if rows is not None else ""
         except Exception as err:
-            print("[-] get_horario_by_id: ", err)
+            print("[-] get_carreer_by_user: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
             if self.cursor:
                 self.cursor.close()
             if self.conn:
                 self.conn.close()
-        
+    
     def close(self):
         self.conn.close()

@@ -4,7 +4,7 @@ from horario import Horario as horario_class
 from constants import TYPE
 
 class Menu(Frame):
-    def __init__(self, container, controller, profile: user_class, *args, **kwargs):
+    def __init__(self, container, controller, profile: teacher_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         
         self.controller = controller
@@ -42,8 +42,14 @@ class Menu(Frame):
         self.bt_registrations = Button(self, text="Planeación", command=self.open_registrations)
         self.bt_registrations.grid(row=5, column=1, padx=10, pady=10)
         
+        self.bt_subjects_careers = Button(self, text="Asignar materias", command=self.open_subjects_careers)
+        self.bt_subjects_careers.grid(row=6, column=0, padx=10, pady=10)
+        
+        self.bt_priority = Button(self, text="Prioridad", command=self.open_priority)
+        self.bt_priority.grid(row=6, column=1, padx=10, pady=10)
+        
         self.bt_exit = Button(self, text="Salir", command=self.exit)
-        self.bt_exit.grid(row=6, column=0, pady=10, padx=35, columnspan=2, sticky="ew")
+        self.bt_exit.grid(row=7, column=0, pady=10, padx=35, columnspan=2, sticky="ew")
         
         # Desavilitar botones por tipo de usuario
         if profile.get_type() == TYPE[1]:
@@ -65,31 +71,25 @@ class Menu(Frame):
         self.controller.show_frame("Users")
     
     def open_students(self) -> None:
-        return
-        # self.controller.show_frame("Students")
+        self.controller.show_frame("Students")
 
     def open_teachers(self) -> None:
-        return
-        # self.controller.show_frame("Teachers")
+        self.controller.show_frame("Teachers")
     
     def open_subjects(self) -> None:
-        return
-        # self.controller.show_frame("Subjects")
+        self.controller.show_frame("Subjects")
 
     def open_schedules(self) -> None:
-        self.controller.show_frame("Horario")
+        self.controller.show_frame("Schedules")
         
     def open_careers(self) -> None:
-        return
-        # self.controller.show_frame("Carreers")
+        self.controller.show_frame("Carreers")
         
     def open_buildings(self) -> None:
-        return
-        # self.controller.show_frame("Buildings")
+        self.controller.show_frame("Buildings")
         
     def open_classrooms(self) -> None:
-        return
-        # self.controller.show_frame("Classrooms")
+        self.controller.show_frame("Classrooms")
         
     def open_groups(self) -> None:
         return
@@ -98,6 +98,12 @@ class Menu(Frame):
     def open_registrations(self) -> None:
         return
         # self.controller.show_frame("Registrations")
+    
+    def open_subjects_careers(self) -> None:
+        self.controller.show_frame("Subjects_Careers")
+    
+    def open_priority(self) -> None:
+        self.controller.show_frame("Priority")
     
     def exit(self) -> None:
         # if hasattr(self.controller, "show_frame"):
