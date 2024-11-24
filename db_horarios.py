@@ -18,7 +18,6 @@ class db_horarios:
                 schedule.get_day(),
                 schedule.get_start_time(),
                 schedule.get_end_time(),
-                schedule.get_type()
             )
             self.cursor.execute(self.sql, self.data)
             self.conn.commit()
@@ -38,7 +37,7 @@ class db_horarios:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"UPDATE {table} SET day=%s, start_time=%s, end_time=%s, WHERE id={shedule.get_id()}"
+            self.sql = f"UPDATE {table} SET day=%s, start_time=%s, end_time=%s WHERE id={shedule.get_id()}"
             self.data = (
                 shedule.get_day(),
                 shedule.get_start_time(),

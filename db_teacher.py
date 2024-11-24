@@ -1,14 +1,14 @@
 from tkinter import messagebox
 import mysql.connector as mysql
 import database as db
-from user import user as teacher_class
+from user import user as user_class
 from teacher import teacher as teacher_class
 from functions import ERROR_TITLE
 
 table = "teacher"
 
 class db_teacher:    
-    def save(self, teacher: teacher_class) -> None:
+    def save(self, teacher: user_class) -> None:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
@@ -31,7 +31,7 @@ class db_teacher:
             if self.conn:
                 self.conn.close()
     
-    def edit(self, teacher: teacher_class) -> None:
+    def edit(self, teacher: user_class) -> None:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
@@ -48,7 +48,7 @@ class db_teacher:
             if self.conn:
                 self.conn.close()
         
-    def remove(self, teacher: teacher_class) -> None:
+    def remove(self, teacher: user_class) -> None:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
