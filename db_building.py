@@ -47,9 +47,6 @@ class db_building:
             if self.conn:
                 self.conn.close()
     
-    def get_max_id(self) -> int:
-        return max_id(table)
-    
     def get_all_building(self) -> list:
         try:
             self.conn = db.conection().open()
@@ -57,7 +54,6 @@ class db_building:
             self.sql = f"SELECT * FROM {table}"
             self.cursor.execute(self.sql)
             rows = self.cursor.fetchall()
-            # self.conn.commit()
             if rows is None:
                 raise Exception("No se encontraron edificios")
             return rows
@@ -70,7 +66,7 @@ class db_building:
             if self.conn:
                 self.conn.close()
 
-    def get_all_building_id(self) -> list:
+    def get_all_building_name(self) -> list:
             try:
                 self.conn = db.conection().open()
                 self.cursor = self.conn.cursor()
@@ -112,6 +108,33 @@ class db_building:
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
         finally:
             # Cerrar los recursos de manera segura
+            if hasattr(self, 'cursor') and self.cursor:
+                self.cursor.close()
+            if hasattr(self, 'conn') and self.conn:
+                self.conn.close()
+
+    def get_building_name_by_id(self, building_id: int) -> str:
+        try:
+            # Establecer la conexión
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+
+            # Consulta parametrizada
+            self.sql = f"SELECT name FROM {table} WHERE id = %s"
+            self.cursor.execute(self.sql, (building_id,))
+
+            # Obtener el resultado
+            row = self.cursor.fetchone()
+            if row is None:
+                raise Exception(f"No se encontró el edificio con el ID '{building_id}'")
+
+            # Retornar el nombre como cadena
+            return row[0]
+        except Exception as err:
+            print("[-] get_building_name_by_id: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error en la consulta")
+        finally:
+            # Cerrar los recursos
             if hasattr(self, 'cursor') and self.cursor:
                 self.cursor.close()
             if hasattr(self, 'conn') and self.conn:

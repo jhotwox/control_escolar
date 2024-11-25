@@ -48,9 +48,6 @@ class db_classroom:
             if self.conn:
                 self.conn.close()
     
-    def get_max_id(self) -> int:
-        return max_id(table)
-    
     def get_all_classromm(self) -> list:
         try:
             self.conn = db.conection().open()

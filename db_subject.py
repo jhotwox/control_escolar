@@ -64,8 +64,13 @@ class db_subject:
             if self.conn:
                 self.conn.close()
     
-    def get_max_id(self) -> int:
-        return max_id(table)
+    def get_max_id_from_table(self) -> int:
+        max_id = 0
+        for item in self.table.get_children():
+            item_values = self.table.item(item, "values")
+            current_id = int(item_values[0])
+            max_id = max(max_id, current_id)
+        return max_id + 1
     
     def get_all_subjects(self) -> list:
         try:

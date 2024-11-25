@@ -3,6 +3,7 @@ from tkinter import messagebox
 from tkinter.ttk import Treeview
 from functions import entry_empty, is_alphabetic, find_id, validate_email, INFO_TITLE, WARNING_TITLE, ERROR_TITLE
 from db_career import db_carreer
+from db_subject import db_subject
 from career import career as career_class
 from table_style import apply_style
 from constants import TYPE
@@ -69,7 +70,7 @@ class Careers(Frame):
         self.table.column("#0", width=0, stretch=False)
         self.table.column("ID", anchor="center", width=30)
         self.table.column("Nombre", anchor="center", width=150)
-       
+        
         self.table.heading("#0", text="", anchor="center")
         self.table.heading("ID", text="ID", anchor="center")
         self.table.heading("Nombre", text="Nombre", anchor="center")
@@ -128,7 +129,8 @@ class Careers(Frame):
         self.bt_return.configure(state=DISABLED)
 
         self.clear_career()
-        self.tx_id.insert(0, db_carreer.get_max_id(self)+1)
+        next_id = db_subject.get_max_id_from_table(self)
+        self.tx_id.insert(0, next_id)
         self.tx_id.configure(state=DISABLED)
         self.band = True
         return

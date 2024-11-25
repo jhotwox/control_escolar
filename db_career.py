@@ -50,9 +50,6 @@ class db_carreer:
             if self.conn:
                 self.conn.close()
     
-    def get_max_id(self) -> int:
-        return max_id(table)
-    
     def get_all_careers(self) -> list:
         try:
             self.conn = db.conection().open()

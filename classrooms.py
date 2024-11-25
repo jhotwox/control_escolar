@@ -5,8 +5,8 @@ from functions import entry_empty, is_alphabetic, find_id, validate_email, INFO_
 from db_classroom import db_classroom
 from classroom import classroom as classroom_class
 from db_building import db_building
+from db_subject import db_subject
 from table_style import apply_style
-from constants import TYPE_SALONES
 
 class Classrooms(Frame):
     # region Interfaz
@@ -16,8 +16,6 @@ class Classrooms(Frame):
         self.controller = controller
         self.type = type
         self.band = None
-
-        self.TYPE_DICT = TYPE_SALONES
 
         fr_search = Frame(self)
         fr_search.grid(row=0, column=0, sticky="nsw", padx=10, pady=10)
@@ -48,7 +46,7 @@ class Classrooms(Frame):
         self.lb_building = Label(fr_entry, text="Edificio")
         self.lb_building.grid(row=2, column=0, pady=0, sticky="w")
 
-        self.updated_buildings = [str(id) for id in db_building.get_all_building_id(self)]
+        self.updated_buildings = [str(id) for id in db_building.get_all_building_name(self)]
         self.selected_type = StringVar(value="----")  # Valor por defecto
         self.opm_type = OptMenu(fr_entry, values=self.updated_buildings, variable=self.selected_type)
         self.opm_type.grid(row=2, column=1, pady=5)
@@ -83,7 +81,7 @@ class Classrooms(Frame):
         self.table.heading("#0", text="", anchor="center")
         self.table.heading("ID", text="ID", anchor="center")
         self.table.heading("Nombre", text="Nombre", anchor="center")
-        self.table.heading("Nombre_edificio", text="ID del edificio", anchor="center")
+        self.table.heading("Nombre_edificio", text="Nombre del edificio", anchor="center")
 
         self.bt_new = Button(fr_button, text="Nuevo", border_width=1, width=60, command=self.new_classroom)
         self.bt_new.grid(row=0, column=0, padx=5, pady=10)
@@ -106,7 +104,7 @@ class Classrooms(Frame):
     # region Funciones SQL
     def update_building_options(self):
     # Obtener los IDs de edificios actualizados desde la base de datos
-        self.updated_buildings = [str(id) for id in db_building.get_all_building_id(self)]
+        self.updated_buildings = [str(id) for id in db_building.get_all_building_name(self)]
 
         # Actualizar el contenido del OptionMenu
         self.opm_type.configure(values=self.updated_buildings)
@@ -126,7 +124,7 @@ class Classrooms(Frame):
         
         id = search_id()
         if id is None:
-            messagebox.showwarning(WARNING_TITLE, "No se encontro la carrera")
+            messagebox.showwarning(WARNING_TITLE, "No se encontro el salon")
             return
         
         self.table.selection_set(id)
@@ -167,7 +165,8 @@ class Classrooms(Frame):
         self.bt_return.configure(state=DISABLED)
 
         self.clear_classroom()
-        self.tx_id.insert(0, db_classroom.get_max_id(self)+1)
+        next_id = db_subject.get_max_id_from_table(self)
+        self.tx_id.insert(0, next_id)
         self.tx_id.configure(state=DISABLED)
         self.band = True
         return
@@ -229,7 +228,7 @@ class Classrooms(Frame):
     def clear_classroom(self):
         self.tx_id.delete(0, END)
         self.tx_name.delete(0, END)
-        self.opm_type.set("-----")
+        self.opm_type.set("----")
 
     def default(self):
         self.tx_id.configure(state=ENABLE)
@@ -247,6 +246,7 @@ class Classrooms(Frame):
         self.bt_edit.configure(state=ENABLE)
         self.bt_update.configure(state=ENABLE)
         self.bt_return.configure(state=ENABLE)
+        self.bt_remove.configure(state=ENABLE)
 
     def enable_edit(self):
         self.bt_new.configure(state=DISABLED)
@@ -271,8 +271,16 @@ class Classrooms(Frame):
 
     def update_table(self) -> None:
         self.clear_table()
-        carreras = db_classroom.get_all_classromm(self)
-        self.insert_table(carreras)
+        classrooms = db_classroom.get_all_classromm(self)
+
+        # Convertir IDs de edificios a nombres
+        updated_classrooms = []
+        for classroom in classrooms:
+            id_classroom, name_classroom, id_building = classroom
+            building_name = db_building.get_building_name_by_id(self, id_building)
+            updated_classrooms.append((id_classroom, name_classroom, building_name))
+
+        self.insert_table(updated_classrooms)
 
     # region Validación
     def validate(self) -> None:
@@ -283,6 +291,10 @@ class Classrooms(Frame):
         # Verificar longitud del nombre
         if len(self.tx_name.get()) > 20:
             raise Exception("El nombre del salón es demasiado largo")
+
+        # Verificar que se haya seleccionado un edificio
+        if self.opm_type.get() == "----":
+            raise Exception("Debe seleccionar un edificio")
 
         # Verificar duplicados en el mismo edificio
         classroom_name = self.tx_name.get().strip()
