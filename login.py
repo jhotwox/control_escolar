@@ -17,6 +17,7 @@ from groups import Groups
 from subjects_careers import Subjects_Careers
 from priority import Priority
 from groups import Groups
+from registrations import Registrations
 from constants import TYPE
 
 class Login(Frame):
@@ -81,6 +82,7 @@ class Login(Frame):
                 "Carreers": Careers,
                 "Buildings": Buildings,
                 "Groups": Groups,
+                "Registrations": Registrations,
                 "Classrooms": Classrooms,
                 "Subjects_Careers": Subjects_Careers,
                 "Priority": Priority,
@@ -91,6 +93,7 @@ class Login(Frame):
         if self.user.get_type() == TYPE[1]:
             windows = {
                 "Menu": Menu,
+                "Registrations": Registrations,
                 "Teachers": Teachers
             }
         
@@ -98,6 +101,7 @@ class Login(Frame):
         if self.user.get_type() == TYPE[2]:
             windows = {
                 "Menu": Menu,
+                "Registrations": Registrations,
                 "Students": Students
             }
         

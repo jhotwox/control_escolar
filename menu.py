@@ -61,7 +61,7 @@ class Menu(Frame):
             self.bt_buildings.configure(state=DISABLED)
             self.bt_classrooms.configure(state=DISABLED)
             self.bt_groups.configure(state=DISABLED)
-            self.bt_registrations.configure(state=DISABLED)
+            # self.bt_registrations.configure(state=DISABLED)
             self.bt_subjects_careers.configure(state=DISABLED)
             self.bt_priority.configure(state=DISABLED)
         
@@ -75,7 +75,7 @@ class Menu(Frame):
             self.bt_buildings.configure(state=DISABLED)
             self.bt_classrooms.configure(state=DISABLED)
             self.bt_groups.configure(state=DISABLED)
-            self.bt_registrations.configure(state=DISABLED)
+            # self.bt_registrations.configure(state=DISABLED)
             self.bt_subjects_careers.configure(state=DISABLED)
             self.bt_priority.configure(state=DISABLED)
     
@@ -105,10 +105,9 @@ class Menu(Frame):
         
     def open_groups(self) -> None:
         self.controller.show_frame("Groups")
-        
+    
     def open_registrations(self) -> None:
-        return
-        # self.controller.show_frame("Registrations")
+        self.controller.show_frame("Registrations")
     
     def open_subjects_careers(self) -> None:
         self.controller.show_frame("Subjects_Careers")
