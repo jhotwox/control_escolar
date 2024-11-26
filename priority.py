@@ -2,7 +2,7 @@ from customtkinter import END, CTkButton as Button, CTkEntry as Entry, CTkLabel 
 from tkinter import messagebox
 from tkinter.ttk import Treeview
 from functions import entry_empty, is_alphabetic, find_id, INFO_TITLE, WARNING_TITLE, ERROR_TITLE
-from user import user as teacher_class
+from user import user as user_class
 from table_style import apply_style
 from db_user_subject import db_user_subject
 from db_teacher import db_teacher
@@ -10,7 +10,7 @@ from db_subject import db_subject
 
 class Priority(Frame):
     # region Interfaz
-    def __init__(self, container, controller, type: teacher_class, *args, **kwargs):
+    def __init__(self, container, controller, type: user_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         
         self.controller = controller

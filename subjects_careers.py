@@ -67,7 +67,8 @@ class Subjects_Careers(Frame):
         # Recorrer las materias y añadirlas al textbox
         for subject in assigned_subjects.values():
             self.tx_subject.insert(1.0, subject + "\n")
-            
+        
+        self.tx_subject.configure(state=DISABLED)
         self.opm_subject.configure(state=ENABLE)
 
     def on_selection_subject(self, *args) -> None:

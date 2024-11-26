@@ -1,9 +1,9 @@
 from customtkinter import CTkButton as Button, CTkFrame as Frame, CTkLabel as Label
-from user import user as teacher_class
+from user import user as user_class
 from constants import TYPE
 
 class Menu(Frame):
-    def __init__(self, container, controller, profile: teacher_class, *args, **kwargs):
+    def __init__(self, container, controller, profile: user_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
         
         self.controller = controller

@@ -69,7 +69,7 @@ class Subjects(Frame):
         self.table.column("#0", width=0, stretch=False)
         self.table.column("ID", anchor="center", width=30)
         self.table.column("Nombre", anchor="center", width=150)
-       
+        
         self.table.heading("#0", text="", anchor="center")
         self.table.heading("ID", text="ID", anchor="center")
         self.table.heading("Nombre", text="Nombre", anchor="center")
@@ -116,7 +116,21 @@ class Subjects(Frame):
         self.table.see(id)
     
     def remove_subject(self) -> None:
-        pass
+        try:
+            selected = self.table.focus()
+            if selected is None or selected == "":
+                messagebox.showwarning(WARNING_TITLE, "No se selecciono una materia")
+                return
+            
+            values = self.table.item(selected, "values")
+            aux = subject_class(id=int(values[0]))
+            db_subject.remove(self, aux)
+            messagebox.showinfo(INFO_TITLE, "Materia eliminado")
+            self.update_table()
+            self.default()
+        except Exception as err:
+            print("[-] remove_subject", err)
+            messagebox.showerror(ERROR_TITLE, "No se logro eliminar la materia")
 
     def new_subject(self) -> None:
         self.tx_search.configure(state=DISABLED)
@@ -134,7 +148,8 @@ class Subjects(Frame):
         self.bt_return.configure(state=DISABLED)
 
         self.clear_subject()
-        self.tx_id.insert(0, db_subject.get_max_id(self)+1)
+        next_id = db_subject.get_max_id_from_table(self)
+        self.tx_id.insert(0, next_id)
         self.tx_id.configure(state=DISABLED)
         self.band = True
         return

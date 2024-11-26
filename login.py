@@ -2,9 +2,10 @@ from customtkinter import CTkButton as Button, CTkEntry as Entry, CTkLabel as La
 from tkinter import messagebox
 from functions import is_empty, WARNING_TITLE
 from db_user import db_user
-from user import user as teacher_class
+from user import user as user_class
 from menu import Menu
 from users import Users
+from horario import Horario
 from students import Students
 from horarios import Horario
 from teachers import Teachers
@@ -62,7 +63,7 @@ class Login(Frame):
             return
         
         try:
-            aux = teacher_class(email=email, password=password)
+            aux = user_class(email=email, password=password)
             self.user = db_user.authenticate(self, aux)
         except:
             return

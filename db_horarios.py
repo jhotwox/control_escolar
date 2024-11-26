@@ -5,7 +5,7 @@ from horario import Horario as horario_class
 from db_functions import max_id
 from functions import ERROR_TITLE, WARNING_TITLE
 
-table = "horarios"
+table = "schedule"
 
 class db_horarios:    
     def save(self, schedule: horario_class) -> None:
@@ -18,7 +18,6 @@ class db_horarios:
                 schedule.get_day(),
                 schedule.get_start_time(),
                 schedule.get_end_time(),
-                schedule.get_type()
             )
             self.cursor.execute(self.sql, self.data)
             self.conn.commit()
@@ -38,14 +37,11 @@ class db_horarios:
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
-            self.sql = f"UPDATE {table} SET day=%s, start_time=%s, end_time=%s, WHERE id={shedule.get_id()}"
+            self.sql = f"UPDATE {table} SET day=%s, start_time=%s, end_time=%s WHERE id={shedule.get_id()}"
             self.data = (
-                shedule.get_name(),
-                shedule.get_p_surname(),
-                shedule.get_m_surname(),
-                shedule.get_email(),
-                shedule.get_type(),
-                shedule.get_password()
+                shedule.get_day(),
+                shedule.get_start_time(),
+                shedule.get_end_time()
             )
             self.cursor.execute(self.sql, self.data)
             self.conn.commit()
@@ -75,7 +71,7 @@ class db_horarios:
                 self.conn.close()
         
     def get_max_id(self) -> int:
-        return max_id(table)
+        return max_id("schedule")
     
     def get_all_horarios(self) -> list:
         try:
@@ -106,7 +102,7 @@ class db_horarios:
             row = self.cursor.fetchone()
             self.conn.commit()
             if row is None:
-                raise Exception("No se encontro el usuario")
+                raise Exception("No se encontro el Horario")
             return horario_class(int(row[0]), row[1], row[2], row[3])
         except Exception as err:
             print("[-] get_horario_by_id: ", err)

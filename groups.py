@@ -5,7 +5,7 @@ from db_group import db_group
 from db_classroom import db_classroom
 from group import group as group_class
 from table_style import apply_style
-from functions import WARNING_TITLE, ERROR_TITLE
+from functions import WARNING_TITLE, ERROR_TITLE, INFO_TITLE, find_id
 
 class Groups(Frame):
     def __init__(self, container, controller, type: group_class, *args, **kwargs):
@@ -55,7 +55,7 @@ class Groups(Frame):
         self.lb_classroom.grid(row=4, column=0, pady=0, sticky="w")
 
         self.updated_classrooms = {}
-        self.selected_classroom = StringVar(value="")
+        self.selected_classroom = StringVar(value="----")  # Valor por defecto
         self.opm_classroom = OptMenu(fr_entry, values=self.updated_classrooms.values(), variable=self.selected_classroom)
         self.opm_classroom.grid(row=4, column=1, pady=5)
 
@@ -165,19 +165,46 @@ class Groups(Frame):
         self.bt_return.configure(state=DISABLED)
 
         self.clear_group()
-        next_id = db_group.get_max_id_from_table(self)
-        self.tx_id.insert(0, next_id)
+        next_id = db_group.get_max_id(self) + 1
+        self.tx_id.insert(0, str(next_id))
         self.tx_id.configure(state=DISABLED)
         self.band = True
         return
 
     def save_group(self) -> None:
-        return
+        try:
+            classroom_id = find_id(self.updated_classrooms, self.selected_classroom.get())
+            group = group_class(
+                id=self.tx_id.get(),
+                schedule_id=1,
+                teacher_id=4,
+                classroom_id=classroom_id,
+                subject_id=3,
+                name=self.tx_name.get(),
+                max_quota=int(self.tx_capacity.get()),
+                quota=int(self.tx_capacity.get()),
+                semester=self.tx_semester.get()
+            )
+            db_group_instance = db_group()
+            db_group_instance.save(group)
+            messagebox.showinfo(INFO_TITLE, "grupo guardado exitosamente!")
+            self.default()
+            self.update_table()
+        except Exception as err:
+            print(f"[-] save_group: {err}")
+            messagebox.showerror(ERROR_TITLE, f"Error al guardar grupo en BD")
 
+    def clear_group(self):
+        self.tx_id.delete(0, END)
+        self.tx_name.delete(0, END)
+        self.tx_capacity.delete(0, END)
+        self.tx_semester.delete(0, END)
+        self.opm_classroom.set("")
+    
     def default(self):
         self.updated_classrooms = db_classroom.get_classroom_dict(self)
         self.opm_classroom.configure(values=self.updated_classrooms.values())
-        self.opm_classroom.set("")
+        self.opm_classroom.set("----")
         
         self.tx_id.configure(state=ENABLE)
         
