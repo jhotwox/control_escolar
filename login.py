@@ -14,6 +14,7 @@ from buildings import Buildings
 from classrooms import Classrooms
 from subjects_careers import Subjects_Careers
 from priority import Priority
+from groups import Groups
 from constants import TYPE
 
 class Login(Frame):
@@ -79,7 +80,8 @@ class Login(Frame):
                 "Buildings": Buildings,
                 "Classrooms": Classrooms,
                 "Subjects_Careers": Subjects_Careers,
-                "Priority": Priority
+                "Priority": Priority,
+                "Groups": Groups
             }
         
         # Ventanas a crear en caso de que sea maestro

@@ -1,0 +1,38 @@
+class group:
+    def __init__(self, id: int = 0, schedule_id: int = 0, teacher_id: int = 0, classroom_id: int = 0, subject_id: int = 0, name: str = "", max_quota: int = 0, quota: int = 0, semester: int = 0):
+        self.id = id
+        self.schedule_id = schedule_id
+        self.teacher_id = teacher_id
+        self.classroom_id = classroom_id
+        self.subject_id = subject_id
+        self.name = name
+        self.max_quota = max_quota
+        self.quota = quota
+        self.semester = semester
+    
+    def get_id(self):
+        return self.id
+    
+    def get_schedule_id(self):
+        return self.schedule_id
+    
+    def get_teacher_id(self):
+        return self.teacher_id
+    
+    def get_classroom_id(self):
+        return self.classroom_id
+    
+    def get_subject_id(self):
+        return self.subject_id
+    
+    def get_name(self):
+        return self.name
+    
+    def get_max_quota(self):
+        return self.max_quota
+    
+    def get_quota(self):
+        return self.quota
+    
+    def get_semester(self):
+        return self.semester
