@@ -1,4 +1,4 @@
-from customtkinter import CTkButton as Button, CTkFrame as Frame, CTkLabel as Label
+from customtkinter import CTkButton as Button, CTkFrame as Frame, CTkLabel as Label, DISABLED
 from user import user as user_class
 from constants import TYPE
 
@@ -52,19 +52,32 @@ class Menu(Frame):
         
         # Desavilitar botones por tipo de usuario
         if profile.get_type() == TYPE[1]:
-            # self.bt_users.configure(state=DISABLED)
+            self.bt_users.configure(state=DISABLED)
+            self.bt_students.configure(state=DISABLED)
             # self.bt_teachers.configure(state=DISABLED)
-            # self.bt_subjects.configure(state=DISABLED)
-            # self.bt_careers.configure(state=DISABLED)
-            return
+            self.bt_subjects.configure(state=DISABLED)
+            self.bt_schedules.configure(state=DISABLED)
+            self.bt_careers.configure(state=DISABLED)
+            self.bt_buildings.configure(state=DISABLED)
+            self.bt_classrooms.configure(state=DISABLED)
+            self.bt_groups.configure(state=DISABLED)
+            self.bt_registrations.configure(state=DISABLED)
+            self.bt_subjects_careers.configure(state=DISABLED)
+            self.bt_priority.configure(state=DISABLED)
         
         if profile.get_type() == TYPE[2]:
-            # self.bt_users.configure(state=DISABLED)
+            self.bt_users.configure(state=DISABLED)
             # self.bt_students.configure(state=DISABLED)
-            # self.bt_teachers.configure(state=DISABLED)
-            # self.bt_subjects.configure(state=DISABLED)
-            # self.bt_careers.configure(state=DISABLED)
-            return
+            self.bt_teachers.configure(state=DISABLED)
+            self.bt_subjects.configure(state=DISABLED)
+            self.bt_schedules.configure(state=DISABLED)
+            self.bt_careers.configure(state=DISABLED)
+            self.bt_buildings.configure(state=DISABLED)
+            self.bt_classrooms.configure(state=DISABLED)
+            self.bt_groups.configure(state=DISABLED)
+            self.bt_registrations.configure(state=DISABLED)
+            self.bt_subjects_careers.configure(state=DISABLED)
+            self.bt_priority.configure(state=DISABLED)
     
     def open_users(self) -> None:
         self.controller.show_frame("Users")
