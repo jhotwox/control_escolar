@@ -152,26 +152,6 @@ class db_registration:
             if self.conn:
                 self.conn.close()
     
-    # def get_subjects_name_by_user(self, user_id: int) -> list:
-    #     try:
-    #         self.conn = db.conection().open()
-    #         self.cursor = self.conn.cursor()
-    #         self.sql = f"SELECT s.name FROM {TABLE} p, subject s WHERE s.id = p.group_id AND user_id={user_id}"
-    #         self.cursor.execute(self.sql)
-    #         rows = self.cursor.fetchall()
-    #         self.conn.commit()
-    #         if rows is None:
-    #             return []
-    #         return [row[0] for row in rows]
-    #     except Exception as err:
-    #         print("[-] get_preregistration_by_user: ", err)
-    #         messagebox.showerror(ERROR_TITLE, "Error en la consulta")
-    #     finally:
-    #         if self.cursor:
-    #             self.cursor.close()
-    #         if self.conn:
-    #             self.conn.close()
-    
     def get_quantity_by_group(self, group_id: int) -> int:
         try:
             self.conn = db.conection().open()
@@ -208,6 +188,22 @@ class db_registration:
         except Exception as err:
             print("[-] schedule_crossed: ", err)
             messagebox.showerror(ERROR_TITLE, "Error en la consulta")
+    
+    def delete_all(self) -> None:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"DELETE FROM {TABLE}"
+            self.cursor.execute(self.sql)
+            self.conn.commit()
+        except Exception as err:
+            print("[-] delete_all: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error al eliminar todos los registros")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
     
     def get_max_id(self) -> int:
         return max_id(TABLE)

@@ -241,3 +241,35 @@ class db_group:
                 self.cursor.close()
             if self.conn:
                 self.conn.close()
+                
+    def delete_all(self) -> None:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"DELETE FROM {table}"
+            self.cursor.execute(self.sql)
+            self.conn.commit()
+        except Exception as err:
+            print("[-] delete_all: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error al eliminar todos los grupos")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
+
+    def delete_empty_groups(self) -> None:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"DELETE FROM {table} WHERE max_quota = quota"
+            self.cursor.execute(self.sql)
+            self.conn.commit()
+        except Exception as err:
+            print("[-] delete_empty_groups: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error al eliminar grupos vacios")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()

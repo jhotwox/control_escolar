@@ -144,11 +144,20 @@ class Groups(Frame):
             preregistrations: dict = db_preregistration.get_dict_of_list_by_subject(self)
             print("Preregistrations dict-> ", preregistrations)
             groups: list[group_class] = []
+            
+            # Eliminar grupos y registros previos
+            db_group.delete_all(self)
+            db_registration.delete_all(self)
+                
+            # Recorrer cada materia para crear grupos y asignar estudiantes
             for subject_id in preregistrations.keys():
+                # Lista de estudiantes preregistrados a la materia
                 students_list = preregistrations[subject_id]
                 print("~ students_list -> ", students_list)
+                # Total de estudiantes preregistrados a la materia
                 quota = len(students_list)
                 
+                # Obtener diccionario de prioridades de maestros por materia
                 def get_priority():
                     try:
                         return db_user_subject.teacher_priority_by_subject(self, subject_id)
@@ -156,19 +165,25 @@ class Groups(Frame):
                         print("[-] create_group: ", err)
                         messagebox.showerror(ERROR_TITLE, "Error al obtener prioridades")
                 
+                # Crear grupo, retorna un objeto grupo y crea un registro en la base de datos
                 def create_group() -> group_class:
                     try:
                         priority = get_priority()
                         # print("Prioridad -> ", priority)
+                        
+                        # Obtener maestro y horario disponibles para el grupo
                         (teacher_id, schedule_id) = db_group.teacher_and_schedule_available(self, priority)
                         if teacher_id == None or schedule_id == None:
                             raise Exception("No hay maestros disponibles")
                         # print("teacher_id -> ", teacher_id)
                         # print("schedule_id -> ", schedule_id)
+                        
+                        # Obtener aula disponible a la hora asignada
                         classroom_id = db_classroom.available_by_schedule(self, schedule_id)
                         if classroom_id == None:
                             raise Exception("No hay aulas disponibles")
                         # print("classroom_id -> ", classroom_id)
+                        
                         group_id = db_group.get_max_id(self) + 1
                         # print("group_id -> ", group_id)
                         
@@ -191,6 +206,7 @@ class Groups(Frame):
                         print("[-] create_group: ", err)
                         messagebox.showerror(ERROR_TITLE, "Error al crear grupo")
                 
+                # Recorrer la lista de estudiante preregistrados hasta que quede vacia
                 while len(students_list) > 0:
                     # Crear nuevo grupo cada vez que un estudiante tenga horarios cruzados
                     group = create_group()
@@ -206,7 +222,7 @@ class Groups(Frame):
                                 group_id = group.get_id()
                                 break
                         
-                        # Si el usuario tiene horarios cruzados
+                        # Si el usuario tiene horarios cruzados se alerta por consola para tener control de los grupos
                         if group_id == -1:
                             print(f"[-] create_groups: El estudiante {student_id} tiene horarios cruzados")
                             print(f"Creando nuevo grupo de la materia {subject_id} para el estudiante {student_id}...")
@@ -214,7 +230,12 @@ class Groups(Frame):
                             
                         # Asignar estudiante al grupo
                         db_registration.save(self, student_id, group_id)
+                        
+                        # Eliminar estudiante asignado previamente de la lista
                         students_list.remove(student_id)
+                
+            # Eliminar grupos vacios al terminar de asignar estudiantes
+            db_group.delete_empty_groups(self)
             
             messagebox.showinfo(INFO_TITLE, "Grupos creados exitosamente!")
                 
