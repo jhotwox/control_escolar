@@ -6,6 +6,7 @@ from db_horarios import db_horarios
 from horario import Horario as horario_class
 from table_style import apply_style
 from user import user as user_class
+from db_subject import db_subject
 
 #region Interfaz
 class Horario(Frame):
@@ -127,7 +128,8 @@ class Horario(Frame):
         self.bt_remove.configure(state=DISABLED)
         
         self.clear_horario()
-        self.tx_id.insert(0, db_horarios.get_max_id(self)+1)
+        next_id = db_subject.get_max_id_from_table(self)
+        self.tx_id.insert(0, next_id)
         self.tx_id.configure(state=DISABLED)
         self.band = True
         return
