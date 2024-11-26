@@ -302,15 +302,43 @@ class db_group:
             self.cursor.execute(self.sql)
             rows = self.cursor.fetchall()
             self.conn.commit()
-            result = {}
-            # Ordenar por dia
             return rows if rows else ()
-            # for row in rows:
-                # result[row[0][4]] = (row[0], row[1], row[2], row[3], row[4], row[5], row[6])
-            
-            return result if result else {}                
         except Exception as err:
             print("[-] get_student_table_data: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error al obtener datos de la tabla")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()
+    
+    def get_teacher_table_data(self, teacher_id: int) -> list:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"""
+                SELECT
+                    g.name as group_name,
+                    s.name as subject_name,
+                    u.name as user_name,
+                    c.name as classroom_name,
+                    sch.day,
+                    sch.start_time,
+                    sch.end_time
+                FROM groups g
+                JOIN subject s ON g.subject_id = s.id
+                JOIN user u ON g.teacher_id = u.id
+                JOIN classroom c ON g.classroom_id = c.id
+                JOIN schedule sch ON g.schedule_id = sch.id
+                WHERE g.teacher_id = {teacher_id}
+                ORDER BY sch.day, sch.start_time;
+            """
+            self.cursor.execute(self.sql)
+            rows = self.cursor.fetchall()
+            self.conn.commit()
+            return rows if rows else ()
+        except Exception as err:
+            print("[-] get_teacher_table_data: ", err)
             messagebox.showerror(ERROR_TITLE, "Error al obtener datos de la tabla")
         finally:
             if self.cursor:

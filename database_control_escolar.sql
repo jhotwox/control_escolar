@@ -238,3 +238,35 @@ SELECT user_id, priority FROM user_subject WHERE subject_id = 3 ORDER BY priorit
 -- eliminar todos los registros de registration
 DELETE FROM groups;
 DELETE FROM registration;
+
+
+-- Tabla en planeación estudiantes
+SELECT g.name as group_name, s.name as subject_name, u.name as user_name, c.name as classroom_name, sch.day, sch.start_time, sch.end_time
+FROM groups g
+JOIN subject s ON g.subject_id = s.id
+JOIN user u ON g.teacher_id = u.id
+JOIN classroom c ON g.classroom_id = c.id
+JOIN schedule sch ON g.schedule_id = sch.id
+WHERE g.id IN (
+    SELECT group_id
+    FROM registration
+    WHERE user_id = 3
+)
+ORDER BY sch.day, sch.start_time;
+
+-- Tabla en planeación maestros
+SELECT
+g.name as group_name,
+    s.name as subject_name,
+    u.name as user_name,
+    c.name as classroom_name,
+    sch.day,
+    sch.start_time,
+    sch.end_time
+FROM groups g
+JOIN subject s ON g.subject_id = s.id
+JOIN user u ON g.teacher_id = u.id
+JOIN classroom c ON g.classroom_id = c.id
+JOIN schedule sch ON g.schedule_id = sch.id
+WHERE g.teacher_id = 4
+ORDER BY sch.day, sch.start_time;

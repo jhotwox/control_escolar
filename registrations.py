@@ -65,9 +65,12 @@ class Registrations(Frame):
     
     def draw_schedule(self) -> None:
         colors = ["lightblue", "lightgreen", "lightyellow", "lightpink"]
-        days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
         
-        groups = db_group.get_student_table_data(self, self.type.get_id())
+        groups = []
+        if self.type.get_type() == "alumno":
+            groups = db_group.get_student_table_data(self, self.type.get_id())
+        if self.type.get_type() == "maestro":
+            groups = db_group.get_teacher_table_data(self, self.type.get_id())
         print("grupos -> ", groups)
         
         for group in groups:
