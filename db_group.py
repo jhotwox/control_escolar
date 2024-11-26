@@ -9,7 +9,6 @@ table = "groups"
 
 class db_group:
     
-
     def assign_teacher_and_classroom(self, group: group_class) -> None:
         try:
             max_priority = 3
@@ -40,13 +39,14 @@ class db_group:
             print(f"[-] assign_teacher_and_classroom: {err}")
             raise Exception(f"Error al asignar maestro o aula: {err}")
         
-    
 
     def save(self, group: group_class) -> None:
+
         try:
             self.conn = db.conection().open()
             self.cursor = self.conn.cursor()
             
+
             self.sql = f"SELECT * FROM {table} WHERE schedule_id = %s AND teacher_id = %s"
             self.cursor.execute(self.sql, (group.get_schedule_id(), group.get_teacher_id()))
             existing_group = self.cursor.fetchone()
@@ -55,10 +55,23 @@ class db_group:
             
             self.sql = f"SELECT * FROM {table} WHERE schedule_id = %s AND classroom_id = %s"
             self.cursor.execute(self.sql, (group.get_schedule_id(), group.get_classroom_id()))
+
+            # Validar que no existe a partir del horario y maestro
+            self.sql = f"SELECT * FROM {table} WHERE schedule_id = %s AND teacher_id = %s"
+            self.cursor.execute(self.sql, (group.get_schedule_id(), group.get_teacher_id()))
+            existing_group = self.cursor.fetchone()
+            if existing_group:
+                raise Exception("El group con este horario y maestro ya existe.")
+            
+            # Validar que el salon no esta ocupado
+            self.sql = f"SELECT * FROM {table} WHERE schedule_id = %s AND classroom_id = %s"
+            self.cursor.execute(self.sql, (group.get_schedule_id(), group.get_classroom_id()))
+
             existing_classroom = self.cursor.fetchone()
             if existing_classroom:
                 raise Exception("El salón está ocupado en este horario.")
             
+
             self.sql = "SELECT user_id FROM user_subject WHERE subject_id = %s AND priority = 1"
             self.cursor.execute(self.sql, (group.get_subject_id(),))
             teacher_id = self.cursor.fetchone()
@@ -76,6 +89,27 @@ class db_group:
             self.sql = "SELECT * FROM groups WHERE subject_id = %s AND schedule_id BETWEEN %s AND %s"
             schedule_range = self.get_schedule_range(group.get_subject_id())
             data = (group.get_subject_id(), schedule_range[0], schedule_range[1])
+
+            # Buscar maestro disponible
+            self.sql = "SELECT user_id FROM user_subject WHERE subject_id = %s AND priority = 1"
+            self.cursor.execute(self.sql, (group.get_subject_id(),))
+            teacher_id = self.cursor.fetchone()
+            if teacher_id:
+                group.teacher_id = teacher_id[0]
+            else:
+                self.sql = "SELECT user_id FROM user_subject WHERE subject_id = %s AND priority = 2"
+                self.cursor.execute(self.sql, (group.get_subject_id(),))
+                teacher_id = self.cursor.fetchone()
+                if teacher_id:
+                    group.teacher_id = teacher_id[0]
+                else:
+                    raise Exception("No se encontró un maestro disponible para esta materia.")
+
+            # Validar que el horario no este ocupado
+            self.sql = "SELECT * FROM groups WHERE subject_id = %s AND schedule_id BETWEEN %s AND %s"
+            schedule_range = self.get_schedule_range(group.get_subject_id())
+            data = (group.get_subject_id(), schedule_range[0], schedule_range[1])
+
             self.cursor.execute(self.sql, data)
             existing_schedule = self.cursor.fetchall()
             if existing_schedule:
@@ -84,6 +118,7 @@ class db_group:
             
             self.sql = f"INSERT INTO {table}(schedule_id, teacher_id, classroom_id, subject_id, name, max_quota, quota, semester) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
             self.data = (
+
                 group.get_schedule_id(),
                 group.get_teacher_id(),
                 group.get_classroom_id(),
@@ -92,6 +127,15 @@ class db_group:
                 group.get_max_quota(),
                 group.get_quota(),
                 group.get_semester()
+                group.get_schedule_id(),
+                group.get_teacher_id(),
+                group.get_classroom_id(),
+                group.get_subject_id(),
+                group.get_name(),
+                group.get_max_quota(),
+                group.get_quota(),
+                group.get_semester()
+
             )
             self.cursor.execute(self.sql, self.data)
             self.conn.commit()
@@ -100,6 +144,7 @@ class db_group:
             print(f"[-] Mysql: {err}")
             raise Exception(f"Error en la BD: {err}")
         except Exception as err:
+
             print(f"[-] save in db_groups: {err}")
             raise Exception(f"Error al guardar group: {err}")
         finally:

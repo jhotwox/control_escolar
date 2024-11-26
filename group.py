@@ -5,6 +5,7 @@ class group:
         if semester <= 0:
             raise ValueError("El semestre debe ser un valor positivo.")
 
+
         self.id = id
         self.schedule_id = schedule_id
         self.teacher_id = teacher_id
@@ -21,12 +22,19 @@ class group:
     def get_schedule_id(self):
         return self.schedule_id
     
+
     def set_teacher_id(self, teacher_id: int):
         self.teacher_id = teacher_id
 
     def set_classroom_id(self, classroom_id: int):
         self.classroom_id = classroom_id
+
+    def get_teacher_id(self):
+        return self.teacher_id
     
+    def get_classroom_id(self):
+        return self.classroom_id
+ 
     def get_subject_id(self):
         return self.subject_id
     
