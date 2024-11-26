@@ -91,8 +91,7 @@ class Menu(Frame):
         self.controller.show_frame("Classrooms")
         
     def open_groups(self) -> None:
-        return
-        # self.controller.show_frame("Groups")
+        self.controller.show_frame("Groups")
         
     def open_registrations(self) -> None:
         return

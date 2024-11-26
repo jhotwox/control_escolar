@@ -271,7 +271,7 @@ class Classrooms(Frame):
 
     def update_table(self) -> None:
         self.clear_table()
-        classrooms = db_classroom.get_all_classromm(self)
+        classrooms = db_classroom.get_all_classroom(self)
 
         # Convertir IDs de edificios a nombres
         updated_classrooms = []

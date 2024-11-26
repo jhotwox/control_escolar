@@ -306,5 +306,5 @@ def max_id(table: str) -> int | None:
     conn.close()
     if row[0] is not None:
         return int(row[0])
-    return None
+    return 0
 
