@@ -101,3 +101,24 @@ class db_classroom:
                 self.cursor.close()
             if self.conn:
                 self.conn.close()
+                
+    def available_by_schedule(self, schedule_id: int) -> list:
+        try:
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = f"SELECT id FROM classroom WHERE id NOT IN (SELECT classroom_id FROM groups WHERE schedule_id={schedule_id})"
+            self.cursor.execute(self.sql)
+            rows = self.cursor.fetchall()
+            print("Salones en available_by_schedule -> ", rows)
+            self.conn.commit()
+            if rows is None:
+                raise Exception("No hay salones disponibles")
+            return rows[0][0]
+        except Exception as err:
+            print("[-] available_by_schedule: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error en la consulta")
+        finally:
+            if self.cursor:
+                self.cursor.close()
+            if self.conn:
+                self.conn.close()

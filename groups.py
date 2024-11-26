@@ -6,9 +6,10 @@ from db_classroom import db_classroom
 from group import group as group_class
 from table_style import apply_style
 from functions import WARNING_TITLE, ERROR_TITLE, INFO_TITLE, find_id
-import database as db
-import random
-
+from db_preregistration import db_preregistration
+from preregistration import preregistration as preregistration_class
+from db_user_subject import db_user_subject
+from db_registration import db_registration
 
 class Groups(Frame):
     def __init__(self, container, controller, type: group_class, *args, **kwargs):
@@ -61,6 +62,9 @@ class Groups(Frame):
         self.selected_classroom = StringVar(value="----")  # Valor por defecto
         self.opm_classroom = OptMenu(fr_entry, values=self.updated_classrooms.values(), variable=self.selected_classroom)
         self.opm_classroom.grid(row=4, column=1, pady=5)
+        
+        self.bt_create = Button(fr_entry, text="Crear", border_width=1, width=60, command=self.create_groups)
+        self.bt_create.grid(row=5, column=0, pady=5)
 
         frame = Frame(fr_table)
         frame.grid(row=0, column=0, sticky="nsew")
@@ -128,6 +132,96 @@ class Groups(Frame):
         self.default()
         self.update_table()
 
+    def create_groups(self):
+        try:
+            """ Obtener diccionario de preregistros Ejemplo:
+            {
+                subject_id: [user_id, user_id, user_id],
+                1: [1, 2, 3, ...],
+                2: [1, 3, 5, ...],
+            }
+            """
+            preregistrations: dict = db_preregistration.get_dict_of_list_by_subject(self)
+            print("Preregistrations dict-> ", preregistrations)
+            groups: list[group_class] = []
+            for subject_id in preregistrations.keys():
+                students_list = preregistrations[subject_id]
+                print("~ students_list -> ", students_list)
+                quota = len(students_list)
+                
+                def get_priority():
+                    try:
+                        return db_user_subject.teacher_priority_by_subject(self, subject_id)
+                    except Exception as err:
+                        print("[-] create_group: ", err)
+                        messagebox.showerror(ERROR_TITLE, "Error al obtener prioridades")
+                
+                def create_group() -> group_class:
+                    try:
+                        priority = get_priority()
+                        # print("Prioridad -> ", priority)
+                        (teacher_id, schedule_id) = db_group.teacher_and_schedule_available(self, priority)
+                        if teacher_id == None or schedule_id == None:
+                            raise Exception("No hay maestros disponibles")
+                        # print("teacher_id -> ", teacher_id)
+                        # print("schedule_id -> ", schedule_id)
+                        classroom_id = db_classroom.available_by_schedule(self, schedule_id)
+                        if classroom_id == None:
+                            raise Exception("No hay aulas disponibles")
+                        # print("classroom_id -> ", classroom_id)
+                        group_id = db_group.get_max_id(self) + 1
+                        # print("group_id -> ", group_id)
+                        
+                        group = group_class(
+                            group_id,
+                            schedule_id=schedule_id,
+                            teacher_id=teacher_id,
+                            classroom_id=classroom_id,
+                            subject_id=subject_id,
+                            name="Grupo con " + str(teacher_id) + ": " + str(schedule_id),
+                            max_quota=quota,
+                            quota=quota,
+                            semester=0
+                        )
+                        print("group -> ", group)
+                        db_group.save(self, group)
+                        print(f"Grupo {group.get_id()}: {group.get_name()} guardado exitosamente!")
+                        return group
+                    except Exception as err:
+                        print("[-] create_group: ", err)
+                        messagebox.showerror(ERROR_TITLE, "Error al crear grupo")
+                
+                while len(students_list) > 0:
+                    # Crear nuevo grupo cada vez que un estudiante tenga horarios cruzados
+                    group = create_group()
+                    groups.append(group)
+                    
+                    # Asignar estudiantes al grupo
+                    for student_id in students_list:
+                        group_id = -1
+                        
+                        # Validar que el usuario no tiene horarios cruzados
+                        for group in groups:
+                            if not db_registration.schedule_crossed(self, student_id, group.get_schedule_id()):
+                                group_id = group.get_id()
+                                break
+                        
+                        # Si el usuario tiene horarios cruzados
+                        if group_id == -1:
+                            print(f"[-] create_groups: El estudiante {student_id} tiene horarios cruzados")
+                            print(f"Creando nuevo grupo de la materia {subject_id} para el estudiante {student_id}...")
+                            break
+                            
+                        # Asignar estudiante al grupo
+                        db_registration.save(self, student_id, group_id)
+                        students_list.remove(student_id)
+            
+            messagebox.showinfo(INFO_TITLE, "Grupos creados exitosamente!")
+                
+        except Exception as err:
+            print("[-] create_groups: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error al crear grupos")
+    
     def edit_group(self) -> None:
         return
 

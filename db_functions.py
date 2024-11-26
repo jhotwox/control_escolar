@@ -307,4 +307,3 @@ def max_id(table: str) -> int | None:
     if row[0] is not None:
         return int(row[0])
     return 0
-
