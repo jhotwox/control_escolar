@@ -127,14 +127,6 @@ class db_group:
                 group.get_max_quota(),
                 group.get_quota(),
                 group.get_semester()
-                group.get_schedule_id(),
-                group.get_teacher_id(),
-                group.get_classroom_id(),
-                group.get_subject_id(),
-                group.get_name(),
-                group.get_max_quota(),
-                group.get_quota(),
-                group.get_semester()
 
             )
             self.cursor.execute(self.sql, self.data)

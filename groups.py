@@ -10,7 +10,6 @@ import database as db
 import random
 
 
-
 class Groups(Frame):
     def __init__(self, container, controller, type: group_class, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
@@ -84,7 +83,6 @@ class Groups(Frame):
         scroll_y.configure(command=self.table.yview)
         scroll_x.configure(command=self.table.xview)
 
-
         self.table['columns'] = ("ID", "Horario","Maestro", "Aula", "Materia","Nombre del Grupo","Cupo Max","Cupo", "Semestre")
         self.table.column("#0", width=0, stretch=False)
         self.table.column("ID", anchor="center", width=30)
@@ -115,30 +113,6 @@ class Groups(Frame):
         self.bt_new = Button(fr_button, text="Nuevo", border_width=1, width=60, command=self.new_group)
         self.bt_new.grid(row=0, column=0, padx=5, pady=10)
         self.bt_save = Button(fr_button, text="Salvar", border_width=1, width=60, command=self.save_groups_for_all_schedules)
-
-        self.table['columns'] = ("ID", "Nombre del Grupo","Maestro", "Cupo","Materia", "Semestre", "Aula")
-        self.table.column("#0", width=0, stretch=False)
-        self.table.column("ID", anchor="center", width=30)
-        self.table.column("Nombre del Grupo", anchor="center", width=150)
-        self.table.column("Maestro", anchor="center", width=100)
-        self.table.column("Cupo", anchor="center", width=100)
-        self.table.column("Materia", anchor="center", width=100)
-        self.table.column("Semestre", anchor="center", width=100)
-        self.table.column("Aula", anchor="center", width=150)
-        
-        self.table.heading("#0", text="", anchor="center")
-        self.table.heading("ID", text="ID", anchor="center")
-        self.table.heading("Nombre del Grupo", text="Nombre del Grupo", anchor="center")
-        self.table.heading("Maestro", text="Maestro", anchor="center")
-        self.table.heading("Cupo", text="Cupo", anchor="center")
-        self.table.heading("Materia", text="Materia", anchor="center")
-        self.table.heading("Semestre", text="Semestre", anchor="center")
-        self.table.heading("Aula", text="Aula", anchor="center")
-
-        self.bt_new = Button(fr_button, text="Nuevo", border_width=1, width=60, command=self.new_group)
-        self.bt_new.grid(row=0, column=0, padx=5, pady=10)
-        self.bt_save = Button(fr_button, text="Salvar", border_width=1, width=60, command=self.save_group)
-
         self.bt_save.grid(row=0, column=1, padx=5, pady=10)
         self.bt_cancel = Button(fr_button, text="Cancelar", border_width=1, width=60, command=self.default)
         self.bt_cancel.grid(row=0, column=2, padx=5, pady=10)
@@ -146,11 +120,8 @@ class Groups(Frame):
         self.bt_edit.grid(row=0, column=3, padx=5, pady=10)
         self.bt_remove = Button(fr_button, text="Eliminar", border_width=1, width=60, command=self.remove_group)
         self.bt_remove.grid(row=0, column=4, padx=5, pady=10)
-
         self.bt_update = Button(fr_button, text="Actualizar", border_width=1, width=60, command=self.update_table)
         self.bt_update.grid(row=0, column=3, padx=5, pady=10)
-
-
         self.bt_return = Button(fr_button, text="Regresar", border_width=1, width=60, command=self._return)
         self.bt_return.grid(row=0, column=5, padx=5, pady=10)
 
@@ -162,7 +133,6 @@ class Groups(Frame):
 
     def _return(self) -> None:
         self.controller.show_frame("Menu")
-
     
     def search_id_in_table(self, id: int) -> str:
         for item in self.table.get_children():
@@ -176,33 +146,13 @@ class Groups(Frame):
             messagebox.showwarning(ERROR_TITLE, "Ingrese un ID válido")
             return
         
-
-
-    def update_table(self) -> None:
-        return
-    
-    def search_group(self) -> None:
-        if not self.tx_search.get().isdecimal():
-            messagebox.showwarning(ERROR_TITLE, "Ingrese un ID valido")
-            return
-        
-        def search_id():
-            for item in self.table.get_children():
-                item_values = self.table.item(item, "values")
-                
-                if item_values[0] == self.tx_search.get():
-                    return item
-            return None
-        
-        id = search_id()
-
+        id = self.search_id_in_table(self.tx_search.get())
         if id is None:
             messagebox.showwarning(WARNING_TITLE, "No se encontro el grupo")
             return
         
         self.table.selection_set(id)
         self.table.focus(id)
-
 
     def insert_table(self, data: list) -> None:
         for i, row in enumerate(data):
@@ -217,9 +167,6 @@ class Groups(Frame):
         self.insert_table(groups)
     
   
-
-        self.table.see(id)
-
     
     def remove_group(self) -> None:
        return
@@ -245,29 +192,63 @@ class Groups(Frame):
         self.tx_id.configure(state=DISABLED)
         self.band = True
         return
-
-    def save_group(self) -> None:
+    
+    def update_classrooms(self) -> None:
         try:
-            classroom_id = find_id(self.updated_classrooms, self.selected_classroom.get())
-            group = group_class(
-                id=self.tx_id.get(),
-                schedule_id=1,
-                teacher_id=4,
-                classroom_id=classroom_id,
-                subject_id=3,
-                name=self.tx_name.get(),
-                max_quota=int(self.tx_capacity.get()),
-                quota=int(self.tx_capacity.get()),
-                semester=self.tx_semester.get()
-            )
-            db_group_instance = db_group()
-            db_group_instance.save(group)
-            messagebox.showinfo(INFO_TITLE, "grupo guardado exitosamente!")
+            self.updated_classrooms = db_classroom.get_classroom_dict()
+            
+            menu = self.opm_classroom["menu"]
+            menu.delete(0, "end")
+            for name in self.updated_classrooms.values():
+                menu.add_command(label=name, command=lambda value=name: self.selected_classroom.set(value))
+        except Exception as err:
+            print(f"[-] update_classrooms: {err}")
+            messagebox.showerror(ERROR_TITLE, "Error al actualizar las aulas")
+
+    def save_groups_for_all_schedules(self) -> None:
+        try:
+
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            self.sql = "SELECT id FROM schedule"
+            self.cursor.execute(self.sql)
+            schedules = self.cursor.fetchall()
+
+            self.sql = "SELECT id FROM subject"
+            self.cursor.execute(self.sql)
+            subjects = self.cursor.fetchall()
+
+            if len(subjects) < len(schedules):
+                raise Exception("No hay suficientes materias disponibles para llenar todos los horarios.")
+
+            random.shuffle(subjects)
+
+            for schedule, subject in zip(schedules, subjects):  
+                schedule_id = schedule[0]
+                subject_id = subject[0]
+
+                group = group_class(
+                    id=None,  
+                    schedule_id=schedule_id,
+                    teacher_id=None,  
+                    classroom_id=None,  
+                    subject_id=subject_id,
+                    name=f"Grupo - {subject_id} - Horario {schedule_id}",
+                    max_quota=int(self.tx_capacity.get()),
+                    quota=int(self.tx_capacity.get()),
+                    semester=int(self.tx_semester.get())
+                )
+
+                db_group.assign_teacher_and_classroom(group)
+
+                db_group.save(group)
+
             self.default()
             self.update_table()
         except Exception as err:
-            print(f"[-] save_group: {err}")
-            messagebox.showerror(ERROR_TITLE, f"Error al guardar grupo en BD")
+            print(f"[-] save_groups_for_all_schedules: {err}")
+            messagebox.showerror(ERROR_TITLE, f"Error al guardar grupos: {err}")
+
 
     def clear_group(self):
         self.tx_id.delete(0, END)
