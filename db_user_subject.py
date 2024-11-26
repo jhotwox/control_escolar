@@ -219,5 +219,25 @@ class db_user_subject:
             if self.conn:
                 self.conn.close()
     
+    def teacher_priority_by_subject(self, subject_id: int) -> dict:
+        try:
+            print("subject_id en db_user_subject: ", subject_id)
+            self.conn = db.conection().open()
+            self.cursor = self.conn.cursor()
+            # Obtener prioridades disponibles para la materia de forma ascendente (1, 2, 3, ...)
+            self.sql = f"SELECT user_id, priority FROM user_subject WHERE subject_id = {subject_id} ORDER BY priority ASC"
+            self.cursor.execute(self.sql)
+            priority_rows = self.cursor.fetchall()
+            priority_dict = {row[0]: row[1] for row in priority_rows}
+            if priority_dict.values() == {}:
+                priority_dict = {}
+                raise Exception("No hay maestros disponibles para esta materia.")
+            return priority_dict
+            
+        except Exception as err:
+            print("[-] teacher_priority_by_subject: ", err)
+            messagebox.showerror(ERROR_TITLE, "Error en la consulta")
+        
+        
     def close(self):
         self.conn.close()

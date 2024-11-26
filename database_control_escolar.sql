@@ -221,3 +221,20 @@ FROM user_subject us, user u, subject s
 WHERE u.id=us.user_id
 AND us.subject_id=s.id
 AND us.subject_id={subject_id};
+
+-- Obtener diccionario de materia y prioridad
+SELECT user_id, priority FROM user_subject WHERE subject_id = 1 ORDER BY priority ASC;
+
+-- Saber si el maestro ya tiene un grupo en ese horario
+SELECT COUNT(*) FROM groups WHERE schedule_id = 1 AND teacher_id = 3;
+
+-- Saber si el salón ya tiene un grupo en ese horario
+SELECT id FROM classroom WHERE id NOT IN (SELECT classroom_id FROM groups WHERE schedule_id=1);
+
+-- Saber la prioridad de los maestros en una materia
+SELECT user_id, priority FROM user_subject WHERE subject_id = 3 ORDER BY priority ASC;
+
+-- Eliminar todos los grupos
+-- eliminar todos los registros de registration
+DELETE FROM groups;
+DELETE FROM registration;
