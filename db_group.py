@@ -49,15 +49,15 @@ class db_group:
             
             self.sql = f"INSERT INTO {table}(id, schedule_id, teacher_id, classroom_id, subject_id, name, max_quota, quota, semester) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
             self.data = (
-                grupo.get_id(),
-                grupo.get_schedule_id(),
-                grupo.get_teacher_id(),
-                grupo.get_classroom_id(),
-                grupo.get_subject_id(),
-                grupo.get_name(),
-                grupo.get_max_quota(),
-                grupo.get_quota(),
-                grupo.get_semester()
+                group.get_id(),
+                group.get_schedule_id(),
+                group.get_teacher_id(),
+                group.get_classroom_id(),
+                group.get_subject_id(),
+                group.get_name(),
+                group.get_max_quota(),
+                group.get_quota(),
+                group.get_semester()
             )
             self.cursor.execute(self.sql, self.data)
             self.conn.commit()
@@ -74,7 +74,7 @@ class db_group:
             if self.conn:
                 self.conn.close()
 
-    
+    # Save Erick 
     # def save(self, grupo: group_class) -> None:
     #     try:
     #         self.conn = db.conection().open()

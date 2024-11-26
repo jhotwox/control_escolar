@@ -116,7 +116,7 @@ class Groups(Frame):
 
         self.bt_new = Button(fr_button, text="Nuevo", border_width=1, width=60, command=self.new_group)
         self.bt_new.grid(row=0, column=0, padx=5, pady=10)
-        self.bt_save = Button(fr_button, text="Salvar", border_width=1, width=60, command=self.save_groups_for_all_schedules)
+        self.bt_save = Button(fr_button, text="Salvar", border_width=1, width=60)
         self.bt_save.grid(row=0, column=1, padx=5, pady=10)
         self.bt_cancel = Button(fr_button, text="Cancelar", border_width=1, width=60, command=self.default)
         self.bt_cancel.grid(row=0, column=2, padx=5, pady=10)
@@ -181,7 +181,7 @@ class Groups(Frame):
                             name="Grupo con " + str(teacher_id) + ": " + str(schedule_id),
                             max_quota=quota,
                             quota=quota,
-                            semester=0
+                            semester=1
                         )
                         print("group -> ", group)
                         db_group.save(self, group)
@@ -260,8 +260,6 @@ class Groups(Frame):
         groups = db_group.get_all_groups(self)
         self.insert_table(groups)
     
-  
-    
     def remove_group(self) -> None:
        return
 
@@ -298,51 +296,6 @@ class Groups(Frame):
         except Exception as err:
             print(f"[-] update_classrooms: {err}")
             messagebox.showerror(ERROR_TITLE, "Error al actualizar las aulas")
-
-    def save_groups_for_all_schedules(self) -> None:
-        try:
-
-            self.conn = db.conection().open()
-            self.cursor = self.conn.cursor()
-            self.sql = "SELECT id FROM schedule"
-            self.cursor.execute(self.sql)
-            schedules = self.cursor.fetchall()
-
-            self.sql = "SELECT id FROM subject"
-            self.cursor.execute(self.sql)
-            subjects = self.cursor.fetchall()
-
-            if len(subjects) < len(schedules):
-                raise Exception("No hay suficientes materias disponibles para llenar todos los horarios.")
-
-            random.shuffle(subjects)
-
-            for schedule, subject in zip(schedules, subjects):  
-                schedule_id = schedule[0]
-                subject_id = subject[0]
-
-                group = group_class(
-                    id=None,  
-                    schedule_id=schedule_id,
-                    teacher_id=None,  
-                    classroom_id=None,  
-                    subject_id=subject_id,
-                    name=f"Grupo - {subject_id} - Horario {schedule_id}",
-                    max_quota=int(self.tx_capacity.get()),
-                    quota=int(self.tx_capacity.get()),
-                    semester=int(self.tx_semester.get())
-                )
-
-                db_group.assign_teacher_and_classroom(group)
-
-                db_group.save(group)
-
-            self.default()
-            self.update_table()
-        except Exception as err:
-            print(f"[-] save_groups_for_all_schedules: {err}")
-            messagebox.showerror(ERROR_TITLE, f"Error al guardar grupos: {err}")
-
 
     def clear_group(self):
         self.tx_id.delete(0, END)
