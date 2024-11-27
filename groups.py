@@ -34,34 +34,8 @@ class Groups(Frame):
         self.tx_search.grid(row=0, column=1, padx=10, pady=10)
         self.bt_search = Button(fr_search, text="Buscar", border_width=2, width=100, command=self.search_group)
         self.bt_search.grid(row=0, column=2, padx=5, pady=10)
-
-        self.lb_id = Label(fr_entry, text="ID")
-        self.lb_id.grid(row=0, column=0, pady=0, sticky="w")
-        self.tx_id = Entry(fr_entry, placeholder_text="ID")
-        self.tx_id.grid(row=0, column=1, pady=5)
-
-        self.lb_name = Label(fr_entry, text="Nombre del Grupo")
-        self.lb_name.grid(row=1, column=0, pady=0, sticky="w")
-        self.tx_name = Entry(fr_entry, placeholder_text="Nombre del grupo")
-        self.tx_name.grid(row=1, column=1, pady=5, padx=20)
-
-        self.lb_capacity = Label(fr_entry, text="Cupo Máximo")
-        self.lb_capacity.grid(row=2, column=0, pady=0, sticky="w")
-        self.tx_capacity = Entry(fr_entry, placeholder_text="Cupo máximo")
-        self.tx_capacity.grid(row=2, column=1, pady=5)
-
-        self.lb_semester = Label(fr_entry, text="Semestre")
-        self.lb_semester.grid(row=3, column=0, pady=0, sticky="w")
-        self.tx_semester = Entry(fr_entry, placeholder_text="Semestre")
-        self.tx_semester.grid(row=3, column=1, pady=5)
-
-        self.lb_classroom = Label(fr_entry, text="Aula")
-        self.lb_classroom.grid(row=4, column=0, pady=0, sticky="w")
-
+        
         self.updated_classrooms = {}
-        self.selected_classroom = StringVar(value="----")  # Valor por defecto
-        self.opm_classroom = OptMenu(fr_entry, values=self.updated_classrooms.values(), variable=self.selected_classroom)
-        self.opm_classroom.grid(row=4, column=1, pady=5)
         
         self.bt_create = Button(fr_entry, text="Crear", border_width=1, width=60, command=self.create_groups)
         self.bt_create.grid(row=5, column=0, pady=5)
@@ -288,10 +262,6 @@ class Groups(Frame):
         self.tx_search.configure(state=DISABLED)
         self.bt_search.configure(state=DISABLED)
 
-        self.tx_id.configure(state=ENABLE)
-        self.tx_name.configure(state=ENABLE)
-        self.opm_classroom.configure(state=ENABLE)
-
         self.bt_new.configure(state=DISABLED)
         self.bt_save.configure(state=ENABLE)
         self.bt_cancel.configure(state=ENABLE)    
@@ -306,38 +276,11 @@ class Groups(Frame):
         self.band = True
         return
     
-    def update_classrooms(self) -> None:
-        try:
-            self.updated_classrooms = db_classroom.get_classroom_dict()
-            
-            menu = self.opm_classroom["menu"]
-            menu.delete(0, "end")
-            for name in self.updated_classrooms.values():
-                menu.add_command(label=name, command=lambda value=name: self.selected_classroom.set(value))
-        except Exception as err:
-            print(f"[-] update_classrooms: {err}")
-            messagebox.showerror(ERROR_TITLE, "Error al actualizar las aulas")
-
-    def clear_group(self):
-        self.tx_id.delete(0, END)
-        self.tx_name.delete(0, END)
-        self.tx_capacity.delete(0, END)
-        self.tx_semester.delete(0, END)
-        self.opm_classroom.set("")
-    
     def default(self):
         self.updated_classrooms = db_classroom.get_classroom_dict(self)
-        self.opm_classroom.configure(values=self.updated_classrooms.values())
-        self.opm_classroom.set("----")
-        
-        self.tx_id.configure(state=ENABLE)
         
         self.tx_search.configure(state=ENABLE)
         self.bt_search.configure(state=ENABLE)
-
-        self.tx_id.configure(state=DISABLED)
-        self.tx_name.configure(state=DISABLED)
-        
 
         self.bt_new.configure(state=ENABLE)
         self.bt_save.configure(state=DISABLED)
@@ -355,6 +298,3 @@ class Groups(Frame):
 
         self.bt_search.configure(state=DISABLED)
         self.tx_search.configure(state=DISABLED)
-        self.tx_id.configure(state=ENABLE)
-        self.tx_name.configure(state=ENABLE)
-        

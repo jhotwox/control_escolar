@@ -296,7 +296,29 @@ class Horario(Frame):
         start_time = datetime.strptime(self.tx_hora_inicio.get(), "%H:%M")
         end_time = datetime.strptime(self.tx_hora_fin.get(), "%H:%M")
         duration = end_time - start_time
-    
+
+        def search_id():
+                for item in self.table.get_children():
+                    item_values = self.table.item(item, "values")
+
+                    if item_values[0] == self.tx_search.get():
+                        return item
+                return None
+            
+        
+        # validar horarios cruzados
+        for item in self.table.get_children():
+            item_values = self.table.item(item, "values")
+
+            if item_values[1] == self.tx_dia.get():
+                # schedule_list.append((item_values[2], item_values[3]))
+                hour_i, minute_i = map(int, item_values[2].split(":"))
+                hour_db_i, minute_db_i = map(int, self.tx_hora_inicio.get().split(":"))
+                hour_f, minute_f = map(int, item_values[3].split(":"))
+                hour_db_f, minute_db_f = map(int, self.tx_hora_fin.get().split(":"))
+                if  ((hour_db_i == hour_i) and (hour_db_f == hour_f)):
+                    raise Exception("El horario ya existe")
+
         if duration < timedelta(hours=2):
             raise Exception("El horario debe tener una duración mínima de 2 horas")
     
