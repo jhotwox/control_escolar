@@ -238,6 +238,7 @@ class Users(Frame):
         self.tx_password.insert(0, values[4])
         self.tx_email.insert(0, values[5])
         self.opm_type.set(values[6])
+        self.opm_type.configure(state=DISABLED)
     
     def edit_user(self) -> None:
         try:
